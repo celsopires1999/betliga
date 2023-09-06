@@ -1,4 +1,4 @@
-import { ResultScore } from "@/backend/result/domain/entities/result-score";
+import { Game } from "@/backend/game-day/domain/entities/game";
 import { Bet, BetCreateParams, BetRestoreParams } from "./bet";
 import { BetScoreParams } from "./bet-score";
 
@@ -87,23 +87,66 @@ describe("Bet Unit Test", () => {
   });
 
   it("should calculate points", () => {
-    let resultScores = [
-      ResultScore.create({
-        gameId: "1",
+    const games = [
+      Game.restore({
+        id: "1",
+        gameDayId: "1",
+        gameNumber: 1,
+        homeId: "1",
+        awayId: "2",
         homeGols: 1,
         awayGols: 1,
+        column: "X",
       }),
-      ResultScore.create({
-        gameId: "2",
+      Game.restore({
+        id: "2",
+        gameDayId: "1",
+        gameNumber: 2,
+        homeId: "3",
+        awayId: "4",
         homeGols: 2,
         awayGols: 1,
+        column: "1",
       }),
     ];
 
     const bet = Bet.create(betCreate);
-    bet.calculatePoints(resultScores);
+    bet.calculatePoints(games);
     expect(bet.betScores[0].points).toBe(10);
     expect(bet.betScores[1].points).toBe(5);
     expect(bet.points).toBe(15);
+  });
+
+  it("should convert to JSON", () => {
+    const expectedJSON = {
+      id: "1",
+      gameDayId: "1",
+      betterId: "1",
+      betScores: [
+        {
+          id: "1",
+          gameId: "1",
+          betId: "1",
+          homeGols: 1,
+          awayGols: 1,
+          column: "X",
+          points: null,
+        },
+        {
+          id: "2",
+          gameId: "1",
+          betId: "2",
+          homeGols: 2,
+          awayGols: 1,
+          column: "1",
+          points: 5,
+        },
+      ],
+      points: null,
+    };
+
+    const bet = Bet.restore(betRestore);
+    const betJSON = bet.toJSON();
+    expect(betJSON).toStrictEqual(expectedJSON);
   });
 });

@@ -1,4 +1,4 @@
-import { ResultScore } from "@/backend/result/domain/entities/result-score";
+import { Game } from "@/backend/game-day/domain/entities/game";
 import { v4 as uuidv4 } from "uuid";
 
 export type BetScoreParams = {
@@ -53,9 +53,9 @@ export class BetScore {
     return new BetScore(params);
   }
 
-  calculatePoints(resultScore: ResultScore) {
-    const checkScore = this.checkScore(resultScore);
-    if (this.column === resultScore.column) {
+  calculatePoints(game: Game) {
+    const checkScore = this.checkScore(game);
+    if (this.column === game.column) {
       if (this.column === "1") {
         if (checkScore) {
           this.points = 5;
@@ -75,11 +75,8 @@ export class BetScore {
     return this.points;
   }
 
-  private checkScore(resultScore: ResultScore) {
-    if (
-      this.homeGols === resultScore.homeGols &&
-      this.awayGols === resultScore.awayGols
-    ) {
+  private checkScore(game: Game) {
+    if (this.homeGols === game.homeGols && this.awayGols === game.awayGols) {
       return true;
     }
     return false;

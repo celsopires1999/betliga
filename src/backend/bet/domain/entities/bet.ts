@@ -1,4 +1,4 @@
-import { ResultScore } from "@/backend/result/domain/entities/result-score";
+import { Game } from "@/backend/game-day/domain/entities/game";
 import { v4 as uuidv4 } from "uuid";
 import { BetScore, BetScoreParams, BetScorePropsJson } from "./bet-score";
 
@@ -11,7 +11,7 @@ export type BetRestoreParams = {
 };
 
 export type BetCreateParams = Omit<BetRestoreParams, "id" | "betScores"> & {
-  betScores: Omit<BetScoreParams, "id" | "column" | "points">[];
+  betScores: Omit<BetScoreParams, "id" | "betId" | "column" | "points">[];
 };
 
 export type BetPropsJson = Omit<BetRestoreParams, "betScores"> & {
@@ -38,8 +38,11 @@ export class Bet {
   }
 
   static create(params: BetCreateParams) {
-    const betScores = params.betScores.map((b) => BetScore.create(b));
-    return new Bet({ ...params, betScores, id: uuidv4() });
+    const id = uuidv4();
+    const betScores = params.betScores.map((b) =>
+      BetScore.create({ ...b, betId: id })
+    );
+    return new Bet({ ...params, betScores, id });
   }
 
   static restore(props: BetRestoreParams) {
@@ -47,21 +50,21 @@ export class Bet {
     return new Bet({ ...props, betScores });
   }
 
-  calculatePoints(resultScores: ResultScore[]) {
+  calculatePoints(games: Game[]) {
     let points = 0;
-    for (let i = 0; i < this.betScores.length; i++) {
-      this.betScores[i], resultScores[i];
-      points = points + this.betScores[i].calculatePoints(resultScores[i]);
-    }
+    this.betScores.forEach((b) => {
+      const index = games.findIndex((g) => b.gameId === g.id);
+      if (index !== -1) {
+        points = points + b.calculatePoints(games[index]);
+      }
+    });
     this.points = points;
   }
 
   toJSON(): BetPropsJson {
     return {
       ...this,
-      betScores: this.betScores.map((b) => {
-        b.toJSON();
-      }),
+      betScores: this.betScores.map((b) => b.toJSON()),
     };
   }
 }

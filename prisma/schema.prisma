@@ -16,16 +16,16 @@ datasource db {
 }
 
 model LigaModel {
-  id         String         @id @map("_id")
-  name       String
-  gameDays   GameDayModel[]
-  createdAat DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  id        String         @id @map("_id")
+  name      String         @unique
+  gameDays  GameDayModel[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 model BetterModel {
   id        String     @id @map("_id")
-  name      String
+  name      String     @unique
   bets      BetModel[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -33,7 +33,7 @@ model BetterModel {
 
 model TeamModel {
   id        String      @id @map("_id")
-  name      String
+  name      String      @unique
   homes     GameModel[] @relation("Homes")
   aways     GameModel[] @relation("Aways")
   createdAt DateTime    @default(now())
@@ -52,9 +52,11 @@ model GameModel {
   homeGols   Int?
   awayGols   Int?
   column     String?
+  betsScores BetScoreModel[]
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
-  betsScores BetScoreModel[]
+
+  @@unique([gameDayId, gameNumber])
 }
 
 model GameDayModel {
@@ -66,6 +68,8 @@ model GameDayModel {
   games     GameModel[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+
+  @@unique([ligaId, round])
 }
 
 model BetModel {
@@ -78,18 +82,27 @@ model BetModel {
   points    Int?
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+
+  @@unique([gameDayId, betterId])
 }
 
 model BetScoreModel {
-  id         String    @id @map("_id")
-  game       GameModel @relation(fields: [gameId], references: [id])
-  gameId     String
-  bet        BetModel  @relation(fields: [betId], references: [id])
-  betId      String
-  homeGols   Int
-  awayGols   Int
-  column     String
-  points     Int?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  id        String    @id @map("_id")
+  game      GameModel @relation(fields: [gameId], references: [id])
+  gameId    String
+  bet       BetModel  @relation(fields: [betId], references: [id])
+  betId     String
+  homeGols  Int
+  awayGols  Int
+  column    String
+  points    Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([gameId, betId])
+}
+
+model ReportModel {
+  id       String @id @map("_id")
+  dataJson Json
 }

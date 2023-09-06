@@ -1,0 +1,25 @@
+### Bet
+POST http://localhost:3000/api/bets/create-by-values HTTP/1.1
+Content-Type: application/json
+
+{
+    "liga": {
+        "name": "Bundesliga 2023/24"
+    },
+       "better": {
+        "name": "Better 1"
+    },
+    "gameDay": {
+        "round": 1
+    },
+     "betScores": [
+        {
+            "homeGols": 2,
+            "awayGols": 1,
+            "gameNumber": 1
+        }
+    ]
+}
+
+### GET
+GET http://localhost:3000/api/bets HTTP/1.1
