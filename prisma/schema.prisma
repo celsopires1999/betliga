@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  disabled = true
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model LigaModel {
+  id         String         @id @map("_id")
+  name       String
+  gameDays   GameDayModel[]
+  createdAat DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model BetterModel {
+  id        String     @id @map("_id")
+  name      String
+  bets      BetModel[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model TeamModel {
+  id        String      @id @map("_id")
+  name      String
+  homes     GameModel[] @relation("Homes")
+  aways     GameModel[] @relation("Aways")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model GameModel {
+  id         String          @id @map("_id")
+  gameDay    GameDayModel    @relation(fields: [gameDayId], references: [id])
+  gameDayId  String
+  gameNumber Int
+  home       TeamModel       @relation("Homes", fields: [homeId], references: [id])
+  homeId     String
+  away       TeamModel       @relation("Aways", fields: [awayId], references: [id])
+  awayId     String
+  homeGols   Int?
+  awayGols   Int?
+  column     String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  betsScores BetScoreModel[]
+}
+
+model GameDayModel {
+  id        String      @id @map("_id")
+  liga      LigaModel   @relation(fields: [ligaId], references: [id])
+  ligaId    String
+  round     Int
+  bets      BetModel[]
+  games     GameModel[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model BetModel {
+  id        String          @id @map("_id")
+  gameDay   GameDayModel    @relation(fields: [gameDayId], references: [id])
+  gameDayId String
+  better    BetterModel     @relation(fields: [betterId], references: [id])
+  betterId  String
+  betScores BetScoreModel[]
+  points    Int?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model BetScoreModel {
+  id         String    @id @map("_id")
+  game       GameModel @relation(fields: [gameId], references: [id])
+  gameId     String
+  bet        BetModel  @relation(fields: [betId], references: [id])
+  betId      String
+  homeGols   Int
+  awayGols   Int
+  column     String
+  points     Int?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
