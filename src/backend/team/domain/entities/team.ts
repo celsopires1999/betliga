@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 type TeamProps = {
   id: string;
   name: string;
@@ -12,9 +14,19 @@ export class Team {
     this.name = props.name;
   }
 
-  static create(props: Omit<TeamProps, "id">) {}
+  static create(params: Omit<TeamProps, "id">) {
+    const id = uuidv4();
+    return new Team({ ...params, id });
+  }
 
-  static restore(props: TeamProps) {
-    return new Team(props);
+  static restore(params: TeamProps) {
+    return new Team(params);
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+    };
   }
 }

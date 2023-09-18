@@ -109,14 +109,14 @@ describe("GameDayPrismaRepository Unit Test", () => {
     });
 
     const repository = new GameDayPrismaRepository();
-    let gameDay = await repository.findById("1");
+    const gameDay = await repository.findById("1");
     gameDay.games[0].updateScore(1, 1);
     gameDay.games[1].updateScore(2, 1);
     gameDay.games[2].updateScore(1, 2);
     await repository.update(gameDay);
-    gameDay = await repository.findById("1");
-    expect(gameDay.games[0].column).toBe("X");
-    expect(gameDay.games[1].column).toBe("1");
-    expect(gameDay.games[2].column).toBe("2");
+    const foundGameDay = await repository.findById("1");
+    expect(foundGameDay.games[0].column).toBe("X");
+    expect(foundGameDay.games[1].column).toBe("1");
+    expect(foundGameDay.games[2].column).toBe("2");
   });
 });

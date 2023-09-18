@@ -1,10 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import {
-  Game,
-  GameCreateParams,
-  GamePropsJson,
-  GameRestoreParams,
-} from "./game";
+import { Game, GamePropsJson, GameRestoreParams } from "./game";
 
 export type GameDayProps = {
   id: string;
@@ -14,7 +9,11 @@ export type GameDayProps = {
 };
 
 export type GameDayCreateParams = Omit<GameDayProps, "id" | "games"> & {
-  games: GameCreateParams[];
+  games: {
+    gameNumber: number;
+    homeId: string;
+    awayId: string;
+  }[];
 };
 
 export type GameDayRestoreParams = Omit<GameDayProps, "games"> & {
@@ -39,13 +38,29 @@ export class GameDay {
   }
 
   static create(params: GameDayCreateParams) {
-    const games = params.games.map((g) => Game.create(g));
-    return new GameDay({ ...params, games, id: uuidv4() });
+    const id = uuidv4();
+    const games = params.games.map((g) => Game.create({ ...g, gameDayId: id }));
+    return new GameDay({ ...params, games, id });
   }
 
   static restore(params: GameDayRestoreParams) {
     const games = params.games.map((g) => Game.restore(g));
     return new GameDay({ ...params, games });
+  }
+
+  updateScores(
+    params: {
+      gameNumber: number;
+      homeGols: number;
+      awayGols: number;
+    }[]
+  ) {
+    this.games.forEach((g) => {
+      const index = params.findIndex((p) => p.gameNumber === g.gameNumber);
+      if (index !== -1) {
+        g.updateScore(params[index].homeGols, params[index].awayGols);
+      }
+    });
   }
 
   toJSON(): GameDayPropsJson {

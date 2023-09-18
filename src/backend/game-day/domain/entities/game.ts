@@ -62,9 +62,18 @@ export class Game {
   }
 
   defineColumn() {
-    if (!this.homeGols || !this.awayGols) {
+    if (Number.isNaN(this.homeGols) || Number.isNaN(this.awayGols)) {
       return null;
     }
+
+    if (this.homeGols === null || this.homeGols === undefined) {
+      return null;
+    }
+
+    if (this.awayGols === null || this.awayGols === undefined) {
+      return null;
+    }
+
     if (this.homeGols > this.awayGols) {
       return "1";
     }

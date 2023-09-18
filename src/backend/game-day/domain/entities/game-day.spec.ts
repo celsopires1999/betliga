@@ -87,8 +87,10 @@ describe("GameDay Unit Test", () => {
 
   it("should update Score", () => {
     const gameDay = GameDay.create(gameDayCreate);
-    gameDay.games[0].updateScore(1, 1);
-    gameDay.games[1].updateScore(2, 1);
+    gameDay.updateScores([
+      { gameNumber: 1, homeGols: 1, awayGols: 1 },
+      { gameNumber: 2, homeGols: 2, awayGols: 1 },
+    ]);
     expect(gameDay.games[0].homeGols).toBe(1);
     expect(gameDay.games[0].awayGols).toBe(1);
     expect(gameDay.games[0].column).toBe("X");
@@ -126,8 +128,11 @@ describe("GameDay Unit Test", () => {
       ],
     };
     const gameDay = GameDay.restore(gameDayRestore);
-    gameDay.games[0].updateScore(1, 1);
-    gameDay.games[1].updateScore(2, 1);
+    gameDay.updateScores([
+      { gameNumber: 1, homeGols: 1, awayGols: 1 },
+      { gameNumber: 2, homeGols: 2, awayGols: 1 },
+    ]);
+
     const gameDayJSON = gameDay.toJSON();
     expect(gameDayJSON).toStrictEqual(expectedJSON);
   });

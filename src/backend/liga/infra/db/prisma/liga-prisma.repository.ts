@@ -1,13 +1,43 @@
-import { checkNotFoundError } from "@/backend/@seedwork/infra/db/prisma/utils";
 import { prisma } from "@/backend/@prisma/prisma";
+import {
+  checkDuplicatedError,
+  checkNotFoundError,
+} from "@/backend/@seedwork/infra/db/prisma/utils";
 import { Liga } from "../../../domain/entities/liga";
-import { ILigaRepository } from "../../../domain/repository/liga.respository";
+import { ILigaRepository } from "../../../domain/repository/liga.repository";
 
 export class LigaPrismaRepository implements ILigaRepository {
+  async bulkInsert(entities: Liga[]): Promise<void> {
+    const teams = entities.map((e) => e.toJSON());
+    try {
+      await prisma.ligaModel.createMany({
+        data: teams,
+      });
+    } catch (e) {
+      throw checkDuplicatedError(
+        `There are errors on creating multiple ligas ${entities
+          .map((entity) => entity.name)
+          .join(", ")}`,
+        e
+      );
+    }
+  }
+
   async findById(id: string): Promise<Liga> {
     let _id = `${id}`;
     const model = await this._get(_id);
     return Liga.restore({ id: model.id, name: model.name });
+  }
+
+  async findByName(name: string): Promise<Liga> {
+    try {
+      const model = await prisma.ligaModel.findFirstOrThrow({
+        where: { name },
+      });
+      return Liga.restore({ id: model.id, name: model.name });
+    } catch (e) {
+      throw checkNotFoundError(`Entity not found using Name ${name}`, e);
+    }
   }
 
   async findAll(): Promise<Liga[]> {

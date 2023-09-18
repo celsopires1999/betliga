@@ -1,6 +1,7 @@
 import { initializePrisma } from "@/backend/@seedwork/tests/initialize-prisma";
 import { BetPrismaRepository } from "./bet-prisma.repository";
 import { prisma } from "@/backend/@prisma/prisma";
+import { Game } from "@/backend/game-day/domain/entities/game";
 
 describe("BetPrismaRepository Unit Test", () => {
   beforeEach(async () => {
@@ -38,6 +39,13 @@ describe("BetPrismaRepository Unit Test", () => {
           name: "Better 1",
         },
       }),
+      prisma.gameDayModel.create({
+        data: {
+          id: "1",
+          round: 1,
+          ligaId: "1",
+        },
+      }),
       prisma.gameModel.createMany({
         data: [
           {
@@ -55,13 +63,6 @@ describe("BetPrismaRepository Unit Test", () => {
             awayId: "4",
           },
         ],
-      }),
-      prisma.gameDayModel.create({
-        data: {
-          id: "1",
-          round: 1,
-          ligaId: "1",
-        },
       }),
     ]);
   }, 10000);
@@ -120,5 +121,67 @@ describe("BetPrismaRepository Unit Test", () => {
     const repository = new BetPrismaRepository();
     const bets = await repository.search({ gameDayId: "1" });
     expect(bets.length).toBe(1);
+  });
+
+  it("should calculate points", async () => {
+    await prisma.$transaction(async (prisma) => {
+      await prisma.betModel.create({
+        data: {
+          id: "1",
+          betterId: "1",
+          gameDayId: "1",
+        },
+      });
+      await prisma.betScoreModel.createMany({
+        data: [
+          {
+            id: "1",
+            betId: "1",
+            gameId: "1",
+            homeGols: 1,
+            awayGols: 1,
+            column: "X",
+          },
+          {
+            id: "2",
+            betId: "1",
+            gameId: "2",
+            homeGols: 2,
+            awayGols: 1,
+            column: "1",
+          },
+        ],
+      });
+    });
+    const games = [
+      Game.restore({
+        id: "1",
+        gameDayId: "1",
+        gameNumber: 1,
+        homeId: "1",
+        awayId: "2",
+        homeGols: 1,
+        awayGols: 1,
+        column: "X",
+      }),
+      Game.restore({
+        id: "2",
+        gameDayId: "1",
+        gameNumber: 2,
+        homeId: "3",
+        awayId: "4",
+        homeGols: 2,
+        awayGols: 1,
+        column: "1",
+      }),
+    ];
+    const repository = new BetPrismaRepository();
+    const bet = await repository.findById("1");
+    bet.calculatePoints(games);
+    await repository.update(bet);
+    const foundBet = await repository.findById("1");
+    expect(foundBet.betScores[0].points).toBe(10);
+    expect(foundBet.betScores[1].points).toBe(5);
+    expect(foundBet.points).toBe(15);
   });
 });
