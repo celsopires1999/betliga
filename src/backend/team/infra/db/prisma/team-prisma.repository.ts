@@ -33,7 +33,7 @@ export class TeamPrismaRepository implements ITeamRepository {
 
   async findByName(name: string): Promise<Team> {
     try {
-      const model = await prisma.teamModel.findFirstOrThrow({
+      const model = await prisma.teamModel.findUniqueOrThrow({
         where: { name },
       });
       return Team.restore({ id: model.id, name: model.name });
@@ -43,7 +43,14 @@ export class TeamPrismaRepository implements ITeamRepository {
   }
 
   async findAll(): Promise<Team[]> {
-    throw new Error("Method not implemented.");
+    try {
+      const models = await prisma.teamModel.findMany({
+        orderBy: { name: "asc" },
+      });
+      return models.map((m) => Team.restore({ id: m.id, name: m.name }));
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async _get(id: string) {

@@ -31,7 +31,7 @@ export class LigaPrismaRepository implements ILigaRepository {
 
   async findByName(name: string): Promise<Liga> {
     try {
-      const model = await prisma.ligaModel.findFirstOrThrow({
+      const model = await prisma.ligaModel.findUniqueOrThrow({
         where: { name },
       });
       return Liga.restore({ id: model.id, name: model.name });
@@ -41,7 +41,14 @@ export class LigaPrismaRepository implements ILigaRepository {
   }
 
   async findAll(): Promise<Liga[]> {
-    throw new Error("Method not implemented.");
+    try {
+      const models = await prisma.ligaModel.findMany({
+        orderBy: { name: "asc" },
+      });
+      return models.map((m) => Liga.restore({ id: m.id, name: m.name }));
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async _get(id: string) {
