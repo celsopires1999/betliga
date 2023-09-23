@@ -4,7 +4,6 @@ import * as React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import NextAppDirEmotionCacheProvider from "./EmotionCache";
-// import theme from "./theme";
 import { SnackbarProvider } from "notistack";
 import { useAppTheme } from "@/frontend/hooks/useAppTheme";
 import { AppBar, Box, Container } from "@mui/material";
@@ -36,8 +35,8 @@ export default function ThemeRegistry({
             color="inherit"
             elevation={3}
             sx={{
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
-              ml: { sm: `${drawerWidth}px` },
+              width: { md: `calc(100% - ${drawerWidth}px)` },
+              ml: { md: `${drawerWidth}px` },
             }}
           >
             <Header

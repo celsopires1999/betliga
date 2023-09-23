@@ -151,7 +151,7 @@ export default function CreateGameDay() {
               </FormControl>
             </Grid>
 
-            <Grid xs={6} md={5}>
+            <Grid xs={12} md={5}>
               <AutocompleteField
                 name="home"
                 label="Home"
@@ -161,7 +161,7 @@ export default function CreateGameDay() {
                 handleChange={handleChangeGame}
               />
             </Grid>
-            <Grid xs={6} md={5}>
+            <Grid xs={12} md={5}>
               <AutocompleteField
                 name="away"
                 label="Away"
