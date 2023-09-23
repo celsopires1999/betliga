@@ -1,4 +1,5 @@
 import { CreateTeamsUseCase } from "@/backend/team/application/use-cases/create-teams.use-case";
+import { ListTeamsUseCase } from "@/backend/team/application/use-cases/list-teams-use.case";
 import { TeamPrismaRepository } from "@/backend/team/infra/db/prisma/team-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,8 +18,11 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(output, { status: 201 });
 }
 
-export async function GET(request: NextRequest) {
-  console.log(request);
+export async function GET(_request: NextRequest) {
+  const teamRepo = new TeamPrismaRepository();
+  const useCase = new ListTeamsUseCase(teamRepo);
 
-  return NextResponse.json({ message: "OK" });
+  const output = await useCase.execute();
+
+  return NextResponse.json(output, { status: 200 });
 }

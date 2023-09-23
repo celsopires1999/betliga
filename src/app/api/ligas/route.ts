@@ -1,4 +1,5 @@
 import { CreateLigasUseCase } from "@/backend/liga/application/use-cases/create-ligas.use-case";
+import { ListLigasUseCase } from "@/backend/liga/application/use-cases/list-ligas.use-case";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,8 +18,11 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(output, { status: 201 });
 }
 
-export async function GET(request: NextRequest) {
-  console.log(request);
+export async function GET(_request: NextRequest) {
+  const ligaRepo = new LigaPrismaRepository();
+  const useCase = new ListLigasUseCase(ligaRepo);
 
-  return NextResponse.json({ message: "OK" });
+  const output = await useCase.execute();
+
+  return NextResponse.json(output, { status: 200 });
 }

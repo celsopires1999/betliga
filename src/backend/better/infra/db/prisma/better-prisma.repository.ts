@@ -33,7 +33,7 @@ export class BetterPrismaRepository implements IBetterRepository {
 
   async findByName(name: string): Promise<Better> {
     try {
-      const model = await prisma.betterModel.findFirstOrThrow({
+      const model = await prisma.betterModel.findUniqueOrThrow({
         where: { name },
       });
       return Better.restore({ id: model.id, name: model.name });
