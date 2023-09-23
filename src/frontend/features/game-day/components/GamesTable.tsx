@@ -157,7 +157,7 @@ export default function GamesTable(props: GamesTableProps) {
 
   const handleClick = (
     _event: React.MouseEvent<unknown>,
-    gameNumber: number | undefined
+    gameNumber: number | undefined | null
   ) => {
     if (!gameNumber) {
       return;
@@ -180,7 +180,7 @@ export default function GamesTable(props: GamesTableProps) {
     setSelected(newSelected);
   };
 
-  const isSelected = (gameNumber: number | undefined) => {
+  const isSelected = (gameNumber: number | undefined | null) => {
     if (!gameNumber) {
       return false;
     }

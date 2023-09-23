@@ -30,11 +30,11 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
     },
     {
       path: "/create-bet",
-      name: "Create Bet (TBD)",
+      name: "Create Bet",
     },
     {
-      path: "/result",
-      name: "Results (TBD)",
+      path: "/results",
+      name: "Results",
     },
   ];
 
