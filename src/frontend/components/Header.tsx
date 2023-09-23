@@ -21,7 +21,7 @@ export function Header({
           color="inherit"
           aria-label="menu"
           onClick={handleDrawerToggle}
-          sx={{ mr: 2, display: { sm: "none" } }}
+          sx={{ mr: 2, display: { md: "none" } }}
         >
           <MenuIcon />
         </IconButton>

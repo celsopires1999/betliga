@@ -67,7 +67,7 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
   return (
     <Box
       component="nav"
-      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
       onClick={toggleDrawer}
     >
       <Drawer
@@ -78,7 +78,7 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
           keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
-          display: { xs: "block", sm: "none" },
+          display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
       >
@@ -88,7 +88,7 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
         variant="permanent"
         open
         sx={{
-          display: { xs: "none", sm: "block" },
+          display: { xs: "none", md: "block" },
           "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
       >
