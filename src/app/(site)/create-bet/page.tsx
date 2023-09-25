@@ -1,5 +1,5 @@
-import { Typography } from "@mui/material";
+import { CreateBet } from "@/frontend/features/bet/CreateBet";
 
 export default function CreateBetPage() {
-  return <Typography>Create Bet Page to be done</Typography>;
+  return <CreateBet />;
 }

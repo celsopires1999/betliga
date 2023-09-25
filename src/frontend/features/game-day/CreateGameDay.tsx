@@ -89,16 +89,13 @@ export default function CreateGameDay() {
       }),
     };
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/game-days`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`api/game-days`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(data),
+    });
 
     if (response.ok) {
       enqueueSnackbar(`Game Day created successfully`, { variant: "success" });

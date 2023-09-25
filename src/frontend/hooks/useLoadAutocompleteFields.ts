@@ -7,14 +7,14 @@ export const useLoadAutocompleteFields = () => {
     data: teams,
     error: TeamsError,
     isLoading: TeamsIsLoading,
-  } = useSWR<Team[]>(`${process.env.NEXT_PUBLIC_BASE_URL}/teams`, fetcher, {
+  } = useSWR<Team[]>(`api/teams`, fetcher, {
     fallbackData: [],
   });
   const {
     data: ligas,
     error: LigasError,
     isLoading: LigasIsLoading,
-  } = useSWR<Liga[]>(`${process.env.NEXT_PUBLIC_BASE_URL}/ligas`, fetcher, {
+  } = useSWR<Liga[]>(`api/ligas`, fetcher, {
     fallbackData: [],
   });
 

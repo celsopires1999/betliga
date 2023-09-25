@@ -43,7 +43,14 @@ export class BetterPrismaRepository implements IBetterRepository {
   }
 
   async findAll(): Promise<Better[]> {
-    throw new Error("Method not implemented.");
+    try {
+      const models = await prisma.betterModel.findMany({
+        orderBy: { name: "asc" },
+      });
+      return models.map((m) => Better.restore({ id: m.id, name: m.name }));
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async _get(id: string) {

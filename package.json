@@ -1,5 +1,5 @@
 {
-  "name": "bundesliga",
+  "name": "betliga",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,14 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test1": "jest --watch --runInBand",
     "test": "dotenv -e .env.test jest -- --watch --runInBand",
     "ts-node": "ts-node",
     "tsc:check": "npm run tsc -- --noEmit",
     "tsc": "tsc",
     "db:push": "npx prisma db push",
     "studio": "npx prisma studio",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate & npm run db:push",
+    "fake-api": "json-server --watch api/api.json -p 8000"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/backend/testing/seed.ts"
@@ -49,6 +49,7 @@
     "dotenv-cli": "^7.3.0",
     "jest": "^29.6.4",
     "jest-environment-jsdom": "^29.6.4",
+    "json-server": "^0.17.3",
     "prisma": "^5.2.0",
     "prisma-erd-generator": "^1.11.1",
     "ts-node": "^10.9.1"

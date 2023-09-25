@@ -15,7 +15,7 @@ export class CreateBetUseCase {
   async execute(input: CreateBetInput): Promise<CreateBetOutput> {
     const liga = await this.ligaRepo.findByName(input.liga.name);
     const better = await this.betterRepo.findByName(input.better.name);
-    const gameDay = await this.gameDayRepo.findByByRound(
+    const gameDay = await this.gameDayRepo.findByRound(
       liga.id,
       input.gameDay.round
     );
