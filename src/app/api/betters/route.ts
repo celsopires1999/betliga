@@ -1,4 +1,5 @@
 import { CreateBettersUseCase } from "@/backend/better/application/use-cases/create-betters.use-case";
+import { ListBettersUseCase } from "@/backend/better/application/use-cases/list-betters.use-case";
 import { BetterPrismaRepository } from "@/backend/better/infra/db/prisma/better-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,8 +18,11 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(output, { status: 201 });
 }
 
-export async function GET(request: NextRequest) {
-  console.log(request);
+export async function GET(_request: NextRequest) {
+  const betterRepo = new BetterPrismaRepository();
+  const useCase = new ListBettersUseCase(betterRepo);
 
-  return NextResponse.json({ message: "OK" });
+  const output = await useCase.execute();
+
+  return NextResponse.json(output, { status: 200 });
 }

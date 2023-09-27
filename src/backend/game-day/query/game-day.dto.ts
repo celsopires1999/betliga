@@ -41,4 +41,31 @@ export namespace GameDayDTO {
       };
     }
   }
+
+  type ListByLigaProps = {
+    id: string;
+    round: number;
+    ligaId: string;
+    games: {
+      id: string;
+      gameNumber: number;
+      home: {
+        id: string;
+        name: string;
+      };
+      away: {
+        id: string;
+        name: string;
+      };
+    }[];
+  };
+
+  export class ListByLiga {
+    constructor(public props: ListByLigaProps) {}
+    toJSON() {
+      return {
+        ...this.props,
+      };
+    }
+  }
 }

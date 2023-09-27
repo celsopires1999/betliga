@@ -1,0 +1,178 @@
+{
+  "load-fields": {
+    "ligas": [
+      {
+        "id": "1",
+        "name": "Campeonato Brasileiro 2023"
+      }
+    ],
+    "betters": [
+      {
+        "id": "1",
+        "name": "Pires"
+      },
+      {
+        "id": "2",
+        "name": "Ziegler"
+      }
+    ],
+    "gameDays": [
+      {
+        "id": "1",
+        "round": 3,
+        "ligaId": "1",
+        "games": [
+          {
+            "id": "1",
+            "gameNumber": 1,
+            "home": {
+              "id": "1",
+              "name": "Time 1"
+            },
+            "away": {
+              "id": "2",
+              "name": "Time 2"
+            }
+          },
+          {
+            "id": "2",
+            "gameNumber": 2,
+            "home": {
+              "id": "3",
+              "name": "Time 3"
+            },
+            "away": {
+              "id": "4",
+              "name": "Time 4"
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "round": 22,
+        "ligaId": "1",
+        "games": [
+          {
+            "id": "3",
+            "gameNumber": 1,
+            "home": {
+              "id": "3",
+              "name": "Time 3"
+            },
+            "away": {
+              "id": "4",
+              "name": "Time 4"
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "round": 2,
+        "ligaId": "1",
+        "games": [
+          {
+            "id": "3",
+            "gameNumber": 1,
+            "home": {
+              "id": "5",
+              "name": "Time 5"
+            },
+            "away": {
+              "id": "6",
+              "name": "Time 6"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "ligas": [
+    {
+      "id": "1",
+      "name": "Campeonato Brasileiro 2023"
+    }
+  ],
+  "betters": [
+    {
+      "id": "1",
+      "name": "Pires"
+    },
+    {
+      "id": "2",
+      "name": "Ziegler"
+    }
+  ],
+  "gameDays": [
+    {
+      "id": "1",
+      "round": 3,
+      "ligaId": "1",
+      "games": [
+        {
+          "id": "1",
+          "gameNumber": 1,
+          "home": {
+            "id": "1",
+            "name": "Time 1"
+          },
+          "away": {
+            "id": "2",
+            "name": "Time 2"
+          }
+        },
+        {
+          "id": "2",
+          "gameNumber": 2,
+          "home": {
+            "id": "3",
+            "name": "Time 3"
+          },
+          "away": {
+            "id": "4",
+            "name": "Time 4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "round": 22,
+      "ligaId": "1",
+      "games": [
+        {
+          "id": "3",
+          "gameNumber": 1,
+          "home": {
+            "id": "3",
+            "name": "Time 3"
+          },
+          "away": {
+            "id": "4",
+            "name": "Time 4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "round": 2,
+      "ligaId": "1",
+      "games": [
+        {
+          "id": "3",
+          "gameNumber": 1,
+          "home": {
+            "id": "5",
+            "name": "Time 5"
+          },
+          "away": {
+            "id": "6",
+            "name": "Time 6"
+          }
+        }
+      ]
+    }
+  ]
+}

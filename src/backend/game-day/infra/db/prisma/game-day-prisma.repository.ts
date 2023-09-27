@@ -86,7 +86,7 @@ export class GameDayPrismaRepository implements IGameDayRepository {
     });
   }
 
-  async findByByRound(ligaId: string, round: number): Promise<GameDay> {
+  async findByRound(ligaId: string, round: number): Promise<GameDay> {
     try {
       const model = await prisma.gameDayModel.findFirstOrThrow({
         where: { ligaId, round },

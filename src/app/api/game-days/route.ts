@@ -1,5 +1,7 @@
 import { CreateGameDayUseCase } from "@/backend/game-day/application/use-cases/create-game-day.use-case";
+import { ListGameDaysByLiga } from "@/backend/game-day/application/use-cases/list-game-days-by-liga.use-case";
 import { GameDayPrismaRepository } from "@/backend/game-day/infra/db/prisma/game-day-prisma.repository";
+import { GameDayPrismaDAO } from "@/backend/game-day/query/game-day-prisma.dao";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
 import { TeamPrismaRepository } from "@/backend/team/infra/db/prisma/team-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
@@ -31,7 +33,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  console.log(request);
+  const url = new URL(request.url);
+  const ligaId = url.searchParams.get("ligaId");
 
-  return NextResponse.json({ message: "OK" });
+  const gameDayDAO = new GameDayPrismaDAO();
+  const useCase = new ListGameDaysByLiga(gameDayDAO);
+  const output = await useCase.execute({ ligaId: ligaId ?? "" });
+
+  return NextResponse.json(output, { status: 200 });
 }

@@ -88,4 +88,34 @@ export class GameDayPrismaDAO implements IGameDayDAO {
       }),
     });
   }
+
+  async listByLiga(ligaId: string): Promise<GameDayDTO.ListByLiga[]> {
+    const models = await prisma.gameDayModel.findMany({
+      where: { ligaId },
+      select: {
+        id: true,
+        round: true,
+        ligaId: true,
+        games: {
+          select: {
+            id: true,
+            gameNumber: true,
+            home: { select: { id: true, name: true } },
+            away: { select: { id: true, name: true } },
+          },
+          orderBy: { gameNumber: "asc" },
+        },
+      },
+      orderBy: { round: "desc" },
+    });
+
+    return models.map((model) => {
+      return new GameDayDTO.ListByLiga({
+        id: model.id,
+        round: model.round,
+        ligaId: model.ligaId,
+        games: model.games,
+      });
+    });
+  }
 }
