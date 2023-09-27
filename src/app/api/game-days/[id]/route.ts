@@ -32,7 +32,7 @@ export async function PATCH(
 
   const gameDayRepo = new GameDayPrismaRepository();
   const useCase = new UpdateGameDayResultsUseCase(gameDayRepo);
-  useCase.execute({ id: params.id, games: input.games });
+  await useCase.execute({ id: params.id, games: input.games });
 
   return NextResponse.json({ status: 200 });
 }
