@@ -3,28 +3,19 @@ import { BetPrismaRepository } from "@/backend/bet/infra/db/prisma/bet-prisma.re
 import { GameDayPrismaRepository } from "@/backend/game-day/infra/db/prisma/game-day-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
 
-type Input = {
-  gameDayId: string;
-};
-
-export async function POST(request: NextRequest) {
-  const input: Input = { ...(await request.json()) };
-
+export async function PATCH(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const gameDayRepo = new GameDayPrismaRepository();
   const betRepo = new BetPrismaRepository();
 
   const useCase = new CalculateBetsPointsUseCase(gameDayRepo, betRepo);
 
-  await useCase.execute(input);
+  await useCase.execute({ gameDayId: params.id });
 
   return NextResponse.json(
     { message: "Bets points calculated" },
     { status: 200 }
   );
-}
-
-export async function GET(request: NextRequest) {
-  console.log(request);
-
-  return NextResponse.json({ message: "OK" });
 }

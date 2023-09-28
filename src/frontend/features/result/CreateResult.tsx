@@ -1,23 +1,21 @@
 "use client";
 
-import { Bet } from "@/frontend/types/Bet";
-import { Better } from "@/frontend/types/Better";
 import { GameDay } from "@/frontend/types/GameDay";
 import { Liga } from "@/frontend/types/Liga";
+import { Result } from "@/frontend/types/Result";
 import { fetcher } from "@/frontend/utils/http";
 import { Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { BetForm } from "./components/BetForm";
+import { ResultForm } from "./components/ResultForm";
 
-export function CreateBet() {
+export function CreateResult() {
   const { enqueueSnackbar } = useSnackbar();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-  const initialBetState: Bet = {
+  const initialResultState: Result = {
     liga: { id: "", name: "" },
-    better: { id: "", name: "" },
     gameDay: {
       id: "",
       ligaId: "",
@@ -25,9 +23,9 @@ export function CreateBet() {
       liga: { id: "", name: "" },
       games: [],
     },
-    betScores: [],
+    resultScores: [],
   };
-  const [betState, setBetState] = useState<Bet>(initialBetState);
+  const [resultState, setResultState] = useState<Result>(initialResultState);
 
   const {
     data: ligas,
@@ -38,31 +36,21 @@ export function CreateBet() {
   });
 
   const {
-    data: betters,
-    error: errorBetter,
-    isLoading: isLoadingBetter,
-  } = useSWR<Better[]>(`/api/betters`, fetcher, {
-    fallbackData: [],
-  });
-
-  const {
     data: gameDays,
     error: errorGameDay,
     isLoading: isLoadingGameDay,
   } = useSWR<GameDay[]>(
-    betState.liga?.id ? `/api/game-days?ligaId=${betState.liga?.id}` : null,
+    resultState.liga?.id
+      ? `/api/game-days?ligaId=${resultState.liga?.id}`
+      : null,
     fetcher,
     {
       fallbackData: [],
     }
   );
 
-  const isLoading = isLoadingLiga || isLoadingBetter || isLoadingGameDay;
-  const error = errorLiga
-    ? errorLiga
-    : errorBetter
-    ? errorBetter
-    : errorGameDay;
+  const isLoading = isLoadingLiga || isLoadingGameDay;
+  const error = errorLiga ? errorLiga : errorGameDay;
 
   useEffect(() => {
     if (error) {
@@ -71,30 +59,25 @@ export function CreateBet() {
     }
   }, [error, enqueueSnackbar]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBetState({ ...betState, [name]: value });
-  };
-
   const handleLigaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBetState({
-      ...betState,
+    setResultState({
+      ...resultState,
       [name]: value,
-      ["gameDay"]: initialBetState.gameDay,
-      ["betScores"]: [],
+      ["gameDay"]: initialResultState.gameDay,
+      ["resultScores"]: [],
     });
   };
 
   const handleGameDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBetState({ ...betState, [name]: value, ["betScores"]: [] });
+    setResultState({ ...resultState, [name]: value, ["resultScores"]: [] });
   };
 
-  const handleBetScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
-    const betScores = [...betState.betScores];
+    const betScores = [...resultState.resultScores];
 
     const index = betScores.findIndex((s) => s.gameNumber === gameNumber);
     if (index === -1) {
@@ -111,30 +94,30 @@ export function CreateBet() {
       };
     }
 
-    setBetState({ ...betState, betScores });
+    setResultState({ ...resultState, resultScores: betScores });
   };
 
-  const handleBetScoreAwayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScoreAwayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
-    const betScores = [...betState.betScores];
+    const resultScores = [...resultState.resultScores];
 
-    const index = betScores.findIndex((s) => s.gameNumber === gameNumber);
+    const index = resultScores.findIndex((s) => s.gameNumber === gameNumber);
     if (index === -1) {
-      betScores.push({
+      resultScores.push({
         gameNumber,
         homeGols: 0,
         awayGols: +value,
       });
     } else {
-      betScores[index] = {
+      resultScores[index] = {
         gameNumber,
-        homeGols: betScores[index]?.homeGols,
+        homeGols: resultScores[index]?.homeGols,
         awayGols: +value,
       };
     }
 
-    setBetState({ ...betState, betScores });
+    setResultState({ ...resultState, resultScores: resultScores });
   };
 
   const getGameDays = (ligaId?: string, gameDays?: GameDay[]) => {
@@ -149,12 +132,16 @@ export function CreateBet() {
   };
 
   const getHomeGols = (gameNumber: number) => {
-    const score = betState.betScores.find((g) => g.gameNumber === gameNumber);
+    const score = resultState.resultScores.find(
+      (g) => g.gameNumber === gameNumber
+    );
     return score?.homeGols ?? "";
   };
 
   const getAwayGols = (gameNumber: number) => {
-    const score = betState.betScores.find((g) => g.gameNumber === gameNumber);
+    const score = resultState.resultScores.find(
+      (g) => g.gameNumber === gameNumber
+    );
     return score?.awayGols ?? "";
   };
 
@@ -162,34 +149,27 @@ export function CreateBet() {
     e.preventDefault();
     setIsDisabled(true);
     const data = {
-      liga: {
-        name: betState.liga?.name,
-      },
-      better: {
-        name: betState.better?.name,
-      },
-      gameDay: {
-        round: betState.gameDay?.round,
-      },
-      betScores: betState.betScores,
+      games: resultState.resultScores,
     };
-
-    const response = await fetch(`/api/bets`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `/api/game-days/${resultState.gameDay?.id}/result`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }
+    );
 
     if (response.ok) {
-      enqueueSnackbar(`Bet created successfully`, { variant: "success" });
-      setBetState(initialBetState);
+      enqueueSnackbar(`Result created successfully`, { variant: "success" });
+      setResultState(initialResultState);
     } else {
       console.error(
-        `There was an error on Bet creation. Status: ${response.status} - Message: ${response.statusText}`
+        `There was an error on Result creation. Status: ${response.status} - Message: ${response.statusText}`
       );
-      enqueueSnackbar(`Bet not created: ${response.statusText}`, {
+      enqueueSnackbar(`Result not created: ${response.statusText}`, {
         variant: "error",
       });
     }
@@ -202,25 +182,23 @@ export function CreateBet() {
       <Paper>
         <Box p={2}>
           <Box mb={2}>
-            <Typography variant="h4">Create Bet</Typography>
+            <Typography variant="h4">Create Result</Typography>
           </Box>
         </Box>
-        <BetForm
+        <ResultForm
           ligas={ligas}
-          betters={betters}
-          betState={betState}
           gameDays={gameDays}
           isLoading={isLoading}
           isDisabled={isDisabled}
           getAwayGols={getAwayGols}
           getGameDays={getGameDays}
           getHomeGols={getHomeGols}
-          handleChange={handleChange}
+          resultState={resultState}
           handleSubmit={handleSubmit}
           handleLigaChange={handleLigaChange}
           handleGameDayChange={handleGameDayChange}
-          handleBetScoreAwayChange={handleBetScoreAwayChange}
-          handleBetScoreHomeChange={handleBetScoreHomeChange}
+          handleScoreHomeChange={handleScoreHomeChange}
+          handleScoreAwayChange={handleScoreAwayChange}
         />
       </Paper>
     </Box>

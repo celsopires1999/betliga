@@ -1,5 +1,6 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { Liga, Team } from "../types";
+import { Liga } from "../types/Liga";
+import { Team } from "../types/Team";
 
 type Field = Liga | Team;
 

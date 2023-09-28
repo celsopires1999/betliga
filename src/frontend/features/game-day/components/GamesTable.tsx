@@ -1,6 +1,6 @@
 "use client";
 
-import { Game } from "@/frontend/types";
+import { Game } from "@/frontend/types/Game";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";

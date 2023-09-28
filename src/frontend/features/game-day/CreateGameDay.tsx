@@ -1,6 +1,8 @@
 "use client";
 
 import { useLoadAutocompleteFields } from "@/frontend/hooks/useLoadAutocompleteFields";
+import { Game } from "@/frontend/types/Game";
+import { GameDay } from "@/frontend/types/GameDay";
 import {
   Box,
   Button,
@@ -10,24 +12,26 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import Link from "next/link";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { AutocompleteField } from "../../components/AutocompleteField";
-import { Game, GameDay } from "../../types";
 import GamesTable from "./components/GamesTable";
-import Link from "next/link";
 
 export default function CreateGameDay() {
   const { enqueueSnackbar } = useSnackbar();
   const initialGameDayState: GameDay = {
-    liga: null,
+    id: "",
+    ligaId: "",
+    liga: { id: "", name: "" },
     round: 1,
     games: [],
   };
-  const initialGameState = {
-    gameNumber: null,
-    home: null,
-    away: null,
+  const initialGameState: Game = {
+    id: "",
+    gameNumber: 0,
+    home: { id: "", name: "" },
+    away: { id: "", name: "" },
   };
   const [gameDayState, setGameDayState] =
     useState<GameDay>(initialGameDayState);
@@ -89,7 +93,7 @@ export default function CreateGameDay() {
       }),
     };
 
-    const response = await fetch(`api/game-days`, {
+    const response = await fetch(`/api/game-days`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -122,7 +126,6 @@ export default function CreateGameDay() {
         </Box>
 
         <form onSubmit={handleSubmit}>
-          {/* <Grid container spacing={2} mt={2}> */}
           <Grid container spacing={2} p={2}>
             <Grid xs={12} md={9}>
               <AutocompleteField
@@ -130,7 +133,7 @@ export default function CreateGameDay() {
                 label="Liga"
                 options={ligas}
                 disabled={isLoading || isDisabled}
-                value={gameDayState?.liga}
+                value={gameDayState?.liga.id === "" ? null : gameDayState?.liga}
                 handleChange={handleChange}
               />
             </Grid>
@@ -140,7 +143,7 @@ export default function CreateGameDay() {
                   name="round"
                   label="Round"
                   type="number"
-                  value={gameDayState?.round}
+                  value={gameDayState?.round === 0 ? null : gameDayState?.round}
                   disabled={isLoading || isDisabled}
                   onChange={handleChange}
                   inputProps={{ "data-testid": "round" }}
@@ -154,7 +157,7 @@ export default function CreateGameDay() {
                 label="Home"
                 options={teams}
                 disabled={isLoading || isDisabled}
-                value={gameState?.home}
+                value={gameState?.home.id === "" ? null : gameState?.home}
                 handleChange={handleChangeGame}
               />
             </Grid>
@@ -164,7 +167,7 @@ export default function CreateGameDay() {
                 label="Away"
                 options={teams}
                 disabled={isLoading || isDisabled}
-                value={gameState?.away}
+                value={gameState?.away.id === "" ? null : gameState?.away}
                 handleChange={handleChangeGame}
               />
             </Grid>
