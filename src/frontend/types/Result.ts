@@ -6,9 +6,15 @@ export type Result = {
     name: string;
   };
   gameDay: GameDay;
-  resultScores: {
-    gameNumber: number;
-    homeGols: number;
-    awayGols: number;
-  }[];
+  // resultScores: {
+  //   gameNumber: number;
+  //   homeGols: number;
+  //   awayGols: number;
+  // }[];
+};
+
+export type Score = {
+  gameNumber: number;
+  homeGols: number;
+  awayGols: number;
 };

@@ -34,7 +34,7 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
     },
     {
       path: "/game-days/result",
-      name: "Create Result",
+      name: "Game Day Result",
     },
   ];
 

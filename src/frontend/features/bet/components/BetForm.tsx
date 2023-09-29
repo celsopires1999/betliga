@@ -51,7 +51,7 @@ export function BetForm({
             name="better"
             label="Better"
             options={betters}
-            value={betState.better.id === "" ? null : betState.better}
+            value={betState?.better?.id === "" ? null : betState.better}
             handleChange={handleChange}
             disabled={isLoading || isDisabled}
           />
@@ -62,7 +62,7 @@ export function BetForm({
             name="liga"
             label="Liga"
             options={ligas}
-            value={betState.liga.id === "" ? null : betState.liga}
+            value={betState?.liga?.id === "" ? null : betState.liga}
             handleChange={handleLigaChange}
             disabled={isLoading || isDisabled}
           />
@@ -73,7 +73,7 @@ export function BetForm({
             name="gameDay"
             label="Game Day"
             options={getGameDays(betState.liga?.id, gameDays)}
-            value={betState.gameDay.round === 0 ? null : betState.gameDay}
+            value={betState?.gameDay?.round === 0 ? null : betState.gameDay}
             handleChange={handleGameDayChange}
             disabled={isLoading || isDisabled}
           />

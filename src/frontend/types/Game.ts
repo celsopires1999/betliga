@@ -5,4 +5,6 @@ export type Game = {
   gameNumber: number;
   home: Team;
   away: Team;
+  homeGols: number;
+  awayGols: number;
 };

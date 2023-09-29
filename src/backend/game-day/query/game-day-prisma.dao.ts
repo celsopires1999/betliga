@@ -100,6 +100,8 @@ export class GameDayPrismaDAO implements IGameDayDAO {
           select: {
             id: true,
             gameNumber: true,
+            homeGols: true,
+            awayGols: true,
             home: { select: { id: true, name: true } },
             away: { select: { id: true, name: true } },
           },

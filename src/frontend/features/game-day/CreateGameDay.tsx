@@ -32,6 +32,8 @@ export default function CreateGameDay() {
     gameNumber: 0,
     home: { id: "", name: "" },
     away: { id: "", name: "" },
+    awayGols: 0,
+    homeGols: 0,
   };
   const [gameDayState, setGameDayState] =
     useState<GameDay>(initialGameDayState);
@@ -133,7 +135,9 @@ export default function CreateGameDay() {
                 label="Liga"
                 options={ligas}
                 disabled={isLoading || isDisabled}
-                value={gameDayState?.liga.id === "" ? null : gameDayState?.liga}
+                value={
+                  gameDayState?.liga?.id === "" ? null : gameDayState?.liga
+                }
                 handleChange={handleChange}
               />
             </Grid>
@@ -157,7 +161,7 @@ export default function CreateGameDay() {
                 label="Home"
                 options={teams}
                 disabled={isLoading || isDisabled}
-                value={gameState?.home.id === "" ? null : gameState?.home}
+                value={gameState?.home?.id === "" ? null : gameState?.home}
                 handleChange={handleChangeGame}
               />
             </Grid>
@@ -167,7 +171,7 @@ export default function CreateGameDay() {
                 label="Away"
                 options={teams}
                 disabled={isLoading || isDisabled}
-                value={gameState?.away.id === "" ? null : gameState?.away}
+                value={gameState?.away?.id === "" ? null : gameState?.away}
                 handleChange={handleChangeGame}
               />
             </Grid>

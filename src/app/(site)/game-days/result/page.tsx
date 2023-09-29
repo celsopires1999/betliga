@@ -1,5 +1,5 @@
-import { CreateResult } from "@/frontend/features/result/CreateResult";
+import { GameDayResult } from "@/frontend/features/game-day/GameDayResult";
 
-export default function CreateResultPage() {
-  return <CreateResult />;
+export default function GameDayResultPage() {
+  return <GameDayResult />;
 }

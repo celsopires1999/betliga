@@ -23,6 +23,7 @@ type Props = {
   handleScoreHomeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleScoreAwayChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getGameDays: (ligaId?: string, gameDays?: GameDay[]) => GameDay[] | undefined;
+  calculatePoints: () => void;
 };
 
 export function ResultForm({
@@ -39,6 +40,7 @@ export function ResultForm({
   handleGameDayChange,
   handleScoreHomeChange,
   handleScoreAwayChange,
+  calculatePoints,
 }: Props) {
   return (
     <form onSubmit={handleSubmit}>
@@ -48,7 +50,7 @@ export function ResultForm({
             name="liga"
             label="Liga"
             options={ligas}
-            value={resultState.liga.id === "" ? null : resultState.liga}
+            value={resultState?.liga?.id === "" ? null : resultState.liga}
             handleChange={handleLigaChange}
             disabled={isLoading || isDisabled}
           />
@@ -59,7 +61,9 @@ export function ResultForm({
             name="gameDay"
             label="Game Day"
             options={getGameDays(resultState.liga?.id, gameDays)}
-            value={resultState.gameDay.round === 0 ? null : resultState.gameDay}
+            value={
+              resultState?.gameDay?.round === 0 ? null : resultState.gameDay
+            }
             handleChange={handleGameDayChange}
             disabled={isLoading || isDisabled}
           />
@@ -115,11 +119,20 @@ export function ResultForm({
             <Button
               name="save"
               type="submit"
-              variant="contained"
               color="secondary"
+              variant="contained"
               disabled={isLoading || isDisabled}
             >
               {isLoading ? "Loading" : "Save"}
+            </Button>
+            <Button
+              color="warning"
+              variant="contained"
+              name="calculate-points"
+              onClick={calculatePoints}
+              disabled={isLoading || isDisabled}
+            >
+              Calculate Points
             </Button>
           </Box>
         </Grid>

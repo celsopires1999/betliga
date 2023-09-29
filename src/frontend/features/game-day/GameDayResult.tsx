@@ -2,15 +2,15 @@
 
 import { GameDay } from "@/frontend/types/GameDay";
 import { Liga } from "@/frontend/types/Liga";
-import { Result } from "@/frontend/types/Result";
+import { Result, Score } from "@/frontend/types/Result";
 import { fetcher } from "@/frontend/utils/http";
 import { Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { ResultForm } from "./components/ResultForm";
+import { ResultForm } from "./components/GameDayResultForm";
 
-export function CreateResult() {
+export function GameDayResult() {
   const { enqueueSnackbar } = useSnackbar();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
@@ -23,9 +23,10 @@ export function CreateResult() {
       liga: { id: "", name: "" },
       games: [],
     },
-    resultScores: [],
   };
+  const initialScoreState: Score[] = [];
   const [resultState, setResultState] = useState<Result>(initialResultState);
+  const [scoreState, setScoreState] = useState<Score[]>(initialScoreState);
 
   const {
     data: ligas,
@@ -53,6 +54,14 @@ export function CreateResult() {
   const error = errorLiga ? errorLiga : errorGameDay;
 
   useEffect(() => {
+    if (scoreState?.length !== 0) {
+      return;
+    }
+
+    setScoreState(resultState?.gameDay?.games);
+  }, [scoreState?.length, resultState]);
+
+  useEffect(() => {
     if (error) {
       console.error(error);
       enqueueSnackbar(`Error loading data`, { variant: "error" });
@@ -65,42 +74,42 @@ export function CreateResult() {
       ...resultState,
       [name]: value,
       ["gameDay"]: initialResultState.gameDay,
-      ["resultScores"]: [],
     });
+    setScoreState(initialScoreState);
   };
-
   const handleGameDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setResultState({ ...resultState, [name]: value, ["resultScores"]: [] });
+    setResultState({ ...resultState, [name]: value });
+    setScoreState(initialScoreState);
   };
 
   const handleScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
-    const betScores = [...resultState.resultScores];
+    const resultScores = [...scoreState];
 
-    const index = betScores.findIndex((s) => s.gameNumber === gameNumber);
+    const index = resultScores.findIndex((s) => s.gameNumber === gameNumber);
     if (index === -1) {
-      betScores.push({
+      resultScores.push({
         gameNumber,
         homeGols: +value,
         awayGols: 0,
       });
     } else {
-      betScores[index] = {
+      resultScores[index] = {
         gameNumber,
         homeGols: +value,
-        awayGols: betScores[index]?.awayGols,
+        awayGols: resultScores[index]?.awayGols,
       };
     }
 
-    setResultState({ ...resultState, resultScores: betScores });
+    setScoreState(resultScores);
   };
 
   const handleScoreAwayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
-    const resultScores = [...resultState.resultScores];
+    const resultScores = [...scoreState];
 
     const index = resultScores.findIndex((s) => s.gameNumber === gameNumber);
     if (index === -1) {
@@ -117,7 +126,7 @@ export function CreateResult() {
       };
     }
 
-    setResultState({ ...resultState, resultScores: resultScores });
+    setScoreState(resultScores);
   };
 
   const getGameDays = (ligaId?: string, gameDays?: GameDay[]) => {
@@ -132,16 +141,12 @@ export function CreateResult() {
   };
 
   const getHomeGols = (gameNumber: number) => {
-    const score = resultState.resultScores.find(
-      (g) => g.gameNumber === gameNumber
-    );
+    const score = scoreState.find((g) => g.gameNumber === gameNumber);
     return score?.homeGols ?? "";
   };
 
   const getAwayGols = (gameNumber: number) => {
-    const score = resultState.resultScores.find(
-      (g) => g.gameNumber === gameNumber
-    );
+    const score = scoreState.find((g) => g.gameNumber === gameNumber);
     return score?.awayGols ?? "";
   };
 
@@ -149,7 +154,7 @@ export function CreateResult() {
     e.preventDefault();
     setIsDisabled(true);
     const data = {
-      games: resultState.resultScores,
+      games: scoreState,
     };
     const response = await fetch(
       `/api/game-days/${resultState.gameDay?.id}/result`,
@@ -163,17 +168,49 @@ export function CreateResult() {
     );
 
     if (response.ok) {
-      enqueueSnackbar(`Result created successfully`, { variant: "success" });
-      setResultState(initialResultState);
+      enqueueSnackbar(`Result processed successfully`, { variant: "success" });
     } else {
       console.error(
-        `There was an error on Result creation. Status: ${response.status} - Message: ${response.statusText}`
+        `There was an error on Result processing. Status: ${response.status} - Message: ${response.statusText}`
       );
-      enqueueSnackbar(`Result not created: ${response.statusText}`, {
+      enqueueSnackbar(`Result not processed: ${response.statusText}`, {
         variant: "error",
       });
     }
 
+    setResultState(initialResultState);
+    setScoreState(initialScoreState);
+    setIsDisabled(false);
+  }
+
+  async function calculatePoints() {
+    setIsDisabled(true);
+    // const data = {
+    //   games: scoreState,
+    // };
+    const response = await fetch(
+      `/api/game-days/${resultState.gameDay?.id}/calculate-points`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PATCH",
+        // body: JSON.stringify(data),
+      }
+    );
+
+    if (response.ok) {
+      enqueueSnackbar(`Points calculated successfully`, { variant: "success" });
+    } else {
+      console.error(
+        `There was an error on calculating points. Status: ${response.status} - Message: ${response.statusText}`
+      );
+      enqueueSnackbar(`Points not calculated: ${response.statusText}`, {
+        variant: "error",
+      });
+    }
+    // setResultState(initialResultState);
+    // setScoreState(initialScoreState);
     setIsDisabled(false);
   }
 
@@ -182,7 +219,7 @@ export function CreateResult() {
       <Paper>
         <Box p={2}>
           <Box mb={2}>
-            <Typography variant="h4">Create Result</Typography>
+            <Typography variant="h4">Result</Typography>
           </Box>
         </Box>
         <ResultForm
@@ -195,6 +232,7 @@ export function CreateResult() {
           getHomeGols={getHomeGols}
           resultState={resultState}
           handleSubmit={handleSubmit}
+          calculatePoints={calculatePoints}
           handleLigaChange={handleLigaChange}
           handleGameDayChange={handleGameDayChange}
           handleScoreHomeChange={handleScoreHomeChange}

@@ -49,6 +49,8 @@ export namespace GameDayDTO {
     games: {
       id: string;
       gameNumber: number;
+      homeGols: number | null;
+      awayGols: number | null;
       home: {
         id: string;
         name: string;
