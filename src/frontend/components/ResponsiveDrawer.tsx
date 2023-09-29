@@ -25,16 +25,16 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
       name: "Dashboard",
     },
     {
-      path: "/create-game-day",
+      path: "/game-days/create",
       name: "Create Game Day",
     },
     {
-      path: "/create-bet",
+      path: "/bets/create",
       name: "Create Bet",
     },
     {
-      path: "/results",
-      name: "Results",
+      path: "/game-days/result",
+      name: "Create Result",
     },
   ];
 

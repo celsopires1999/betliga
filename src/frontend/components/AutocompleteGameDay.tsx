@@ -1,5 +1,5 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { GameDay } from "../CreateBet";
+import { GameDay } from "../types/GameDay";
 
 export type AutocompleteGameDayProps = {
   name: string;

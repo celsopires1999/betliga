@@ -1,5 +1,6 @@
 import useSWR from "swr";
-import { Liga, Team } from "../types";
+import { Liga } from "../types/Liga";
+import { Team } from "../types/Team";
 import { fetcher } from "../utils/http";
 
 export const useLoadAutocompleteFields = () => {
@@ -7,14 +8,14 @@ export const useLoadAutocompleteFields = () => {
     data: teams,
     error: TeamsError,
     isLoading: TeamsIsLoading,
-  } = useSWR<Team[]>(`api/teams`, fetcher, {
+  } = useSWR<Team[]>(`/api/teams`, fetcher, {
     fallbackData: [],
   });
   const {
     data: ligas,
     error: LigasError,
     isLoading: LigasIsLoading,
-  } = useSWR<Liga[]>(`api/ligas`, fetcher, {
+  } = useSWR<Liga[]>(`/api/ligas`, fetcher, {
     fallbackData: [],
   });
 
