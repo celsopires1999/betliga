@@ -48,7 +48,7 @@ export function ResultForm({
             name="liga"
             label="Liga"
             options={ligas}
-            value={resultState.liga}
+            value={resultState.liga.id === "" ? null : resultState.liga}
             handleChange={handleLigaChange}
             disabled={isLoading || isDisabled}
           />
@@ -59,7 +59,7 @@ export function ResultForm({
             name="gameDay"
             label="Game Day"
             options={getGameDays(resultState.liga?.id, gameDays)}
-            value={resultState.gameDay}
+            value={resultState.gameDay.round === 0 ? null : resultState.gameDay}
             handleChange={handleGameDayChange}
             disabled={isLoading || isDisabled}
           />
