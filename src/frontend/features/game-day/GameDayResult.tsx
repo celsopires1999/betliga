@@ -92,13 +92,13 @@ export function GameDayResult() {
     if (index === -1) {
       resultScores.push({
         gameNumber,
-        homeGols: +value,
-        awayGols: 0,
+        homeGols: value !== "" ? +value : ("" as unknown as number),
+        awayGols: "" as unknown as number,
       });
     } else {
       resultScores[index] = {
         gameNumber,
-        homeGols: +value,
+        homeGols: value !== "" ? +value : ("" as unknown as number),
         awayGols: resultScores[index]?.awayGols,
       };
     }
@@ -115,14 +115,14 @@ export function GameDayResult() {
     if (index === -1) {
       resultScores.push({
         gameNumber,
-        homeGols: 0,
-        awayGols: +value,
+        homeGols: "" as unknown as number,
+        awayGols: value !== "" ? +value : ("" as unknown as number),
       });
     } else {
       resultScores[index] = {
         gameNumber,
         homeGols: resultScores[index]?.homeGols,
-        awayGols: +value,
+        awayGols: value !== "" ? +value : ("" as unknown as number),
       };
     }
 
@@ -169,6 +169,8 @@ export function GameDayResult() {
 
     if (response.ok) {
       enqueueSnackbar(`Result processed successfully`, { variant: "success" });
+      setResultState(initialResultState);
+      setScoreState(initialScoreState);
     } else {
       console.error(
         `There was an error on Result processing. Status: ${response.status} - Message: ${response.statusText}`
@@ -178,16 +180,11 @@ export function GameDayResult() {
       });
     }
 
-    setResultState(initialResultState);
-    setScoreState(initialScoreState);
     setIsDisabled(false);
   }
 
   async function calculatePoints() {
     setIsDisabled(true);
-    // const data = {
-    //   games: scoreState,
-    // };
     const response = await fetch(
       `/api/game-days/${resultState.gameDay?.id}/calculate-points`,
       {
@@ -195,7 +192,6 @@ export function GameDayResult() {
           "Content-Type": "application/json",
         },
         method: "PATCH",
-        // body: JSON.stringify(data),
       }
     );
 
@@ -209,8 +205,6 @@ export function GameDayResult() {
         variant: "error",
       });
     }
-    // setResultState(initialResultState);
-    // setScoreState(initialScoreState);
     setIsDisabled(false);
   }
 

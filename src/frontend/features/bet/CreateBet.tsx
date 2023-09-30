@@ -91,7 +91,7 @@ export function CreateBet() {
     setBetState({ ...betState, [name]: value, ["betScores"]: [] });
   };
 
-  const handleBetScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
     const betScores = [...betState.betScores];
@@ -100,13 +100,13 @@ export function CreateBet() {
     if (index === -1) {
       betScores.push({
         gameNumber,
-        homeGols: +value,
-        awayGols: 0,
+        homeGols: value !== "" ? +value : ("" as unknown as number),
+        awayGols: "" as unknown as number,
       });
     } else {
       betScores[index] = {
         gameNumber,
-        homeGols: +value,
+        homeGols: value !== "" ? +value : ("" as unknown as number),
         awayGols: betScores[index]?.awayGols,
       };
     }
@@ -114,7 +114,7 @@ export function CreateBet() {
     setBetState({ ...betState, betScores });
   };
 
-  const handleBetScoreAwayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleScoreAwayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const gameNumber = +name;
     const betScores = [...betState.betScores];
@@ -123,14 +123,14 @@ export function CreateBet() {
     if (index === -1) {
       betScores.push({
         gameNumber,
-        homeGols: 0,
-        awayGols: +value,
+        homeGols: "" as unknown as number,
+        awayGols: value !== "" ? +value : ("" as unknown as number),
       });
     } else {
       betScores[index] = {
         gameNumber,
         homeGols: betScores[index]?.homeGols,
-        awayGols: +value,
+        awayGols: value !== "" ? +value : ("" as unknown as number),
       };
     }
 
@@ -219,8 +219,8 @@ export function CreateBet() {
           handleSubmit={handleSubmit}
           handleLigaChange={handleLigaChange}
           handleGameDayChange={handleGameDayChange}
-          handleBetScoreAwayChange={handleBetScoreAwayChange}
-          handleBetScoreHomeChange={handleBetScoreHomeChange}
+          handleScoreAwayChange={handleScoreAwayChange}
+          handleScoreHomeChange={handleScoreHomeChange}
         />
       </Paper>
     </Box>

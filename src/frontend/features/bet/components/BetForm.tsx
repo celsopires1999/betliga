@@ -13,16 +13,16 @@ type Props = {
   ligas?: Liga[];
   betters?: Better[];
   isLoading: boolean;
-  gameDays?: GameDay[];
   isDisabled: boolean;
+  gameDays?: GameDay[];
   getHomeGols: (gameNumber: number) => number | "";
   getAwayGols: (gameNumber: number) => number | "";
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLigaChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleGameDayChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBetScoreHomeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleBetScoreAwayChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleScoreHomeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleScoreAwayChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getGameDays: (ligaId?: string, gameDays?: GameDay[]) => GameDay[] | undefined;
 };
 
@@ -40,8 +40,8 @@ export function BetForm({
   handleChange,
   handleLigaChange,
   handleGameDayChange,
-  handleBetScoreHomeChange,
-  handleBetScoreAwayChange,
+  handleScoreHomeChange,
+  handleScoreAwayChange,
 }: Props) {
   return (
     <form onSubmit={handleSubmit}>
@@ -95,7 +95,7 @@ export function BetForm({
                     type="number"
                     value={getHomeGols(g.gameNumber)}
                     disabled={isLoading || isDisabled}
-                    onChange={handleBetScoreHomeChange}
+                    onChange={handleScoreHomeChange}
                   />
                 </FormControl>
               </Grid>
@@ -108,7 +108,7 @@ export function BetForm({
                     type="number"
                     value={getAwayGols(g.gameNumber)}
                     disabled={isLoading || isDisabled}
-                    onChange={handleBetScoreAwayChange}
+                    onChange={handleScoreAwayChange}
                   />
                 </FormControl>
               </Grid>
