@@ -1,4 +1,4 @@
 export type Liga = {
-  id?: string | null;
-  name?: string | null;
+  id?: string;
+  name?: string;
 };
