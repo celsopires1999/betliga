@@ -36,6 +36,10 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
       path: "/game-days/result",
       name: "Game Day Result",
     },
+    {
+      path: "/game-days/evaluation",
+      name: "Game Day Evaluation",
+    },
   ];
 
   const drawer = (
