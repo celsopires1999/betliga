@@ -1,9 +1,11 @@
 "use client";
 
+import { useGameDayEvaluation } from "@/frontend/features/game-day/hooks/useGameDayEvaluation";
 import { useGameDaySelector } from "@/frontend/hooks/useGameDaySelector";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Link from "next/link";
+import { BettersTabs } from "./components/BettersTabs";
 import { GameDaySelector } from "./components/GameDaySelector";
 
 export function GameDayEvaluation() {
@@ -11,13 +13,19 @@ export function GameDayEvaluation() {
     ligas,
     gameDays,
     ligaState,
-    isLoading,
+    isLoadingGameDay,
     isDisabled,
     getGameDays,
     gameDayState,
     handleLigaChange,
     handleGameDayChange,
   ] = useGameDaySelector();
+
+  const [data, isLoadingGameDayEvaluation] = useGameDayEvaluation(
+    gameDayState.gameDay?.id
+  );
+
+  const isLoading = isLoadingGameDay || isLoadingGameDayEvaluation;
 
   return (
     <Box>
@@ -39,9 +47,7 @@ export function GameDayEvaluation() {
             handleLigaChange={handleLigaChange}
             handleGameDayChange={handleGameDayChange}
           />
-          <Typography>
-            {JSON.stringify(gameDayState?.gameDay?.games)}
-          </Typography>
+          <BettersTabs data={data} />
           <Grid xs={12}>
             <Box display="flex" gap={2}>
               <Button
