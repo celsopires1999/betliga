@@ -21,7 +21,7 @@ type Props = {
 export function ResponsiveDrawer({ open, onClose }: Props) {
   const routes = [
     {
-      path: "/",
+      path: "/dashboard",
       name: "Dashboard",
     },
     {
