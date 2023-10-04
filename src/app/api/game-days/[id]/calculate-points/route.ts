@@ -1,3 +1,4 @@
+import { checkAuthentication } from "@/app/api/auth/[...nextauth]/helper";
 import { CalculateBetsPointsUseCase } from "@/backend/bet/application/use-cases/calculate-bets-points.use-case";
 import { BetPrismaRepository } from "@/backend/bet/infra/db/prisma/bet-prisma.repository";
 import { GameDayPrismaRepository } from "@/backend/game-day/infra/db/prisma/game-day-prisma.repository";
@@ -7,6 +8,9 @@ export async function PATCH(
   _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const response = await checkAuthentication();
+  if (response) return response;
+
   const gameDayRepo = new GameDayPrismaRepository();
   const betRepo = new BetPrismaRepository();
 

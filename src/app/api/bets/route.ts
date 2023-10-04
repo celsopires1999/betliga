@@ -4,6 +4,7 @@ import { BetterPrismaRepository } from "@/backend/better/infra/db/prisma/better-
 import { GameDayPrismaRepository } from "@/backend/game-day/infra/db/prisma/game-day-prisma.repository";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuthentication } from "../auth/[...nextauth]/helper";
 
 type Input = {
   liga: {
@@ -24,6 +25,9 @@ type Input = {
 
 export async function POST(request: NextRequest) {
   const input: Input = { ...(await request.json()) };
+
+  const response = await checkAuthentication();
+  if (response) return response;
 
   const ligaRepo = new LigaPrismaRepository();
   const betterRepo = new BetterPrismaRepository();

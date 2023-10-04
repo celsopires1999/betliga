@@ -2,6 +2,7 @@ import { CreateTeamsUseCase } from "@/backend/team/application/use-cases/create-
 import { ListTeamsUseCase } from "@/backend/team/application/use-cases/list-teams-use.case";
 import { TeamPrismaRepository } from "@/backend/team/infra/db/prisma/team-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuthentication } from "../auth/[...nextauth]/helper";
 
 type Input = {
   names: string[];
@@ -19,6 +20,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(_request: NextRequest) {
+  const response = await checkAuthentication();
+  if (response) return response;
+
   const teamRepo = new TeamPrismaRepository();
   const useCase = new ListTeamsUseCase(teamRepo);
 
