@@ -1,3 +1,4 @@
+import { AuthProvider } from "@/frontend/components/AuthProvider";
 import ThemeRegistry from "@/frontend/components/ThemeRegistry/ThemeRegistry";
 import type { Metadata } from "next";
 
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <AuthProvider>
+          <ThemeRegistry>{children}</ThemeRegistry>
+        </AuthProvider>
       </body>
     </html>
   );

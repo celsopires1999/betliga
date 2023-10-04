@@ -2,6 +2,7 @@ import { CreateLigasUseCase } from "@/backend/liga/application/use-cases/create-
 import { ListLigasUseCase } from "@/backend/liga/application/use-cases/list-ligas.use-case";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuthentication } from "../auth/[...nextauth]/helper";
 
 type Input = {
   names: string[];
@@ -19,6 +20,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(_request: NextRequest) {
+  const response = await checkAuthentication();
+  if (response) return response;
+
   const ligaRepo = new LigaPrismaRepository();
   const useCase = new ListLigasUseCase(ligaRepo);
 

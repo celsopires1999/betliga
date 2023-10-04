@@ -5,6 +5,7 @@ import { GameDayPrismaDAO } from "@/backend/game-day/query/game-day-prisma.dao";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
 import { TeamPrismaRepository } from "@/backend/team/infra/db/prisma/team-prisma.repository";
 import { NextRequest, NextResponse } from "next/server";
+import { checkAuthentication } from "../auth/[...nextauth]/helper";
 
 export type Input = {
   liga: {
@@ -20,6 +21,9 @@ export type Input = {
 
 export async function POST(request: NextRequest) {
   const input: Input = { ...(await request.json()) };
+
+  const response = await checkAuthentication();
+  if (response) return response;
 
   const ligaRepo = new LigaPrismaRepository();
   const teamRepo = new TeamPrismaRepository();
