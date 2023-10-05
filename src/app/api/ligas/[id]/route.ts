@@ -1,13 +1,13 @@
 import { GetLigaUseCase } from "@/backend/liga/application/use-cases/get-liga.use-case";
 import { LigaPrismaRepository } from "@/backend/liga/infra/db/prisma/liga-prisma.repository";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { checkAuthentication } from "../../auth/[...nextauth]/helper";
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const response = await checkAuthentication();
+  const response = await checkAuthentication(request);
   if (response) return response;
 
   const ligaRepo = new LigaPrismaRepository();

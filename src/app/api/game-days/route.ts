@@ -22,7 +22,7 @@ export type Input = {
 export async function POST(request: NextRequest) {
   const input: Input = { ...(await request.json()) };
 
-  const response = await checkAuthentication();
+  const response = await checkAuthentication(request);
   if (response) return response;
 
   const ligaRepo = new LigaPrismaRepository();

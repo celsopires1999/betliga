@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(output, { status: 201 });
 }
 
-export async function GET(_request: NextRequest) {
-  const response = await checkAuthentication();
+export async function GET(request: NextRequest) {
+  const response = await checkAuthentication(request);
   if (response) return response;
 
   const teamRepo = new TeamPrismaRepository();

@@ -53,7 +53,7 @@ export function LoginForm() {
         setIsDisabled(false);
         return;
       }
-      router.replace("dashboard");
+      router.push("/dashboard");
     } catch (error) {
       console.log(error);
     }

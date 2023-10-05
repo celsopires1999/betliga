@@ -5,10 +5,10 @@ import { GameDayPrismaRepository } from "@/backend/game-day/infra/db/prisma/game
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const response = await checkAuthentication();
+  const response = await checkAuthentication(request);
   if (response) return response;
 
   const gameDayRepo = new GameDayPrismaRepository();

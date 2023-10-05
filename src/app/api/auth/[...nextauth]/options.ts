@@ -1,5 +1,4 @@
-import { prisma } from "@/backend/@prisma/prisma";
-import { compare } from "bcrypt";
+import { LoginUseCase } from "@/backend/user/application/use-cases/login-use.case";
 import type { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -18,36 +17,33 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           return null;
         }
-        const user = await prisma.userModel.findUnique({
-          where: { email: credentials.email },
+
+        const useCase = new LoginUseCase();
+        return useCase.execute({
+          email: credentials.email,
+          password: credentials.password,
         });
-
-        if (!user) {
-          return null;
-        }
-
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        );
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        };
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+
+    async session({ session, token }) {
+      session.user = token as any;
+      return session;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/",
+    signOut: "/",
   },
 };
