@@ -7,7 +7,7 @@ import { fetcher } from "@/frontend/utils/http";
 import { Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { ResultForm } from "./components/GameDayResultForm";
 
 export function GameDayResult() {
@@ -169,8 +169,7 @@ export function GameDayResult() {
 
     if (response.ok) {
       enqueueSnackbar(`Result processed successfully`, { variant: "success" });
-      setResultState(initialResultState);
-      setScoreState(initialScoreState);
+      mutate(`/api/game-days?ligaId=${resultState.liga?.id}`);
     } else {
       console.error(
         `There was an error on Result processing. Status: ${response.status} - Message: ${response.statusText}`
