@@ -1,87 +1,38 @@
 "use client";
 
-import { GameDay } from "@/frontend/types/GameDay";
-import { Liga } from "@/frontend/types/Liga";
-import { Result, Score } from "@/frontend/types/Result";
-import { fetcher } from "@/frontend/utils/http";
+import { useGameDaySelector } from "@/frontend/hooks/useGameDaySelector";
+import { Score } from "@/frontend/types/Result";
 import { Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 import { ResultForm } from "./components/GameDayResultForm";
 
 export function GameDayResult() {
   const { enqueueSnackbar } = useSnackbar();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-
-  const initialResultState: Result = {
-    liga: { id: "", name: "" },
-    gameDay: {
-      id: "",
-      ligaId: "",
-      round: 0,
-      liga: { id: "", name: "" },
-      games: [],
-    },
-  };
   const initialScoreState: Score[] = [];
-  const [resultState, setResultState] = useState<Result>(initialResultState);
   const [scoreState, setScoreState] = useState<Score[]>(initialScoreState);
+  const [
+    ligas,
+    gameDays,
+    ligaState,
+    isLoadingGameDay,
+    isDisabledGameDay,
+    getGameDays,
+    gameDayState,
+    handleLigaChange,
+    handleGameDayChange,
+  ] = useGameDaySelector();
 
-  const {
-    data: ligas,
-    error: errorLiga,
-    isLoading: isLoadingLiga,
-  } = useSWR<Liga[]>(`/api/ligas`, fetcher, {
-    fallbackData: [],
-  });
-
-  const {
-    data: gameDays,
-    error: errorGameDay,
-    isLoading: isLoadingGameDay,
-  } = useSWR<GameDay[]>(
-    resultState.liga?.id
-      ? `/api/game-days?ligaId=${resultState.liga?.id}`
-      : null,
-    fetcher,
-    {
-      fallbackData: [],
-    }
-  );
-
-  const isLoading = isLoadingLiga || isLoadingGameDay;
-  const error = errorLiga ? errorLiga : errorGameDay;
+  const isLoading = isLoadingGameDay;
 
   useEffect(() => {
     if (scoreState?.length !== 0) {
       return;
     }
-
-    setScoreState(resultState?.gameDay?.games);
-  }, [scoreState?.length, resultState]);
-
-  useEffect(() => {
-    if (error) {
-      console.error(error);
-      enqueueSnackbar(`Error loading data`, { variant: "error" });
-    }
-  }, [error, enqueueSnackbar]);
-
-  const handleLigaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setResultState({
-      ...resultState,
-      [name]: value,
-      ["gameDay"]: initialResultState.gameDay,
-    });
-    setScoreState(initialScoreState);
-  };
-  const handleGameDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setResultState({ ...resultState, [name]: value });
-    setScoreState(initialScoreState);
-  };
+    setScoreState(gameDayState.gameDay.games);
+  }, [scoreState?.length, gameDayState.gameDay.games]);
 
   const handleScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -129,17 +80,6 @@ export function GameDayResult() {
     setScoreState(resultScores);
   };
 
-  const getGameDays = (ligaId?: string, gameDays?: GameDay[]) => {
-    if (!ligaId || !gameDays) {
-      return undefined;
-    }
-    const foundGameDays = gameDays.filter((g) => g.ligaId === ligaId);
-    if (foundGameDays.length === 0) {
-      return undefined;
-    }
-    return foundGameDays;
-  };
-
   const getHomeGols = (gameNumber: number) => {
     const score = scoreState.find((g) => g.gameNumber === gameNumber);
     return score?.homeGols ?? "";
@@ -157,7 +97,7 @@ export function GameDayResult() {
       games: scoreState,
     };
     const response = await fetch(
-      `/api/game-days/${resultState.gameDay?.id}/result`,
+      `/api/game-days/${gameDayState.gameDay.id}/result`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +109,7 @@ export function GameDayResult() {
 
     if (response.ok) {
       enqueueSnackbar(`Result processed successfully`, { variant: "success" });
-      mutate(`/api/game-days?ligaId=${resultState.liga?.id}`);
+      mutate(`/api/game-days?ligaId=${gameDayState.gameDay.ligaId}`);
     } else {
       console.error(
         `There was an error on Result processing. Status: ${response.status} - Message: ${response.statusText}`
@@ -185,7 +125,7 @@ export function GameDayResult() {
   async function calculatePoints() {
     setIsDisabled(true);
     const response = await fetch(
-      `/api/game-days/${resultState.gameDay?.id}/calculate-points`,
+      `/api/game-days/${gameDayState.gameDay.id}/calculate-points`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -219,15 +159,16 @@ export function GameDayResult() {
           ligas={ligas}
           gameDays={gameDays}
           isLoading={isLoading}
-          isDisabled={isDisabled}
+          ligaState={ligaState}
           getAwayGols={getAwayGols}
           getGameDays={getGameDays}
           getHomeGols={getHomeGols}
-          resultState={resultState}
+          gameDayState={gameDayState}
           handleSubmit={handleSubmit}
           calculatePoints={calculatePoints}
           handleLigaChange={handleLigaChange}
           handleGameDayChange={handleGameDayChange}
+          isDisabled={isDisabled || isDisabledGameDay}
           handleScoreHomeChange={handleScoreHomeChange}
           handleScoreAwayChange={handleScoreAwayChange}
         />

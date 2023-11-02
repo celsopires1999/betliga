@@ -1,15 +1,18 @@
 import { AutocompleteField } from "@/frontend/components/AutocompleteField";
-import { AutocompleteGameDay } from "@/frontend/components/AutocompleteGameDay";
-import { Bet } from "@/frontend/types/Bet";
+import { GameDayState, LigaState } from "@/frontend/hooks/useGameDaySelector";
 import { Better } from "@/frontend/types/Better";
 import { GameDay } from "@/frontend/types/GameDay";
 import { Liga } from "@/frontend/types/Liga";
 import { Box, Button, FormControl, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Link from "next/link";
+import { GameDaySelector } from "../../game-day/components/GameDaySelector";
+import { BetState } from "../CreateBet";
 
 type Props = {
-  betState: Bet;
+  betState: BetState;
+  ligaState: LigaState;
+  gameDayState: GameDayState;
   ligas?: Liga[];
   betters?: Better[];
   isLoading: boolean;
@@ -30,6 +33,8 @@ export function BetForm({
   ligas,
   betters,
   betState,
+  ligaState,
+  gameDayState,
   gameDays,
   isLoading,
   isDisabled,
@@ -46,6 +51,18 @@ export function BetForm({
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
+        <GameDaySelector
+          ligas={ligas}
+          gameDays={gameDays}
+          ligaState={ligaState}
+          isLoading={isLoading}
+          isDisabled={isDisabled}
+          getGameDays={getGameDays}
+          gameDayState={gameDayState}
+          handleLigaChange={handleLigaChange}
+          handleGameDayChange={handleGameDayChange}
+        />
+
         <Grid xs={12} md={9}>
           <AutocompleteField
             name="better"
@@ -57,34 +74,12 @@ export function BetForm({
           />
         </Grid>
 
-        <Grid xs={12} md={9}>
-          <AutocompleteField
-            name="liga"
-            label="Liga"
-            options={ligas}
-            value={betState?.liga?.id === "" ? null : betState.liga}
-            handleChange={handleLigaChange}
-            disabled={isLoading || isDisabled}
-          />
-        </Grid>
-
-        <Grid xs={12} md={9}>
-          <AutocompleteGameDay
-            name="gameDay"
-            label="Game Day"
-            options={getGameDays(betState.liga?.id, gameDays)}
-            value={betState?.gameDay?.round === 0 ? null : betState.gameDay}
-            handleChange={handleGameDayChange}
-            disabled={isLoading || isDisabled}
-          />
-        </Grid>
-
-        {betState.gameDay && (
+        {gameDayState.gameDay && (
           <Grid mt={2} xs={12}>
             <Typography variant="h6">Games</Typography>
           </Grid>
         )}
-        {betState.gameDay?.games.map((g) => {
+        {gameDayState.gameDay?.games.map((g) => {
           return (
             <Grid container xs={12} md={9} key={g.id}>
               <Grid xs={6} md={6}>

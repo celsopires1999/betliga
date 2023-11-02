@@ -1,20 +1,21 @@
 "use client";
 
-import { AutocompleteField } from "@/frontend/components/AutocompleteField";
-import { AutocompleteGameDay } from "@/frontend/components/AutocompleteGameDay";
+import { GameDayState, LigaState } from "@/frontend/hooks/useGameDaySelector";
 import { GameDay } from "@/frontend/types/GameDay";
 import { Liga } from "@/frontend/types/Liga";
-import { Result } from "@/frontend/types/Result";
 import { Box, Button, FormControl, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Link from "next/link";
+import { GameDaySelector } from "./GameDaySelector";
 
 type Props = {
   ligas?: Liga[];
   isLoading: boolean;
   isDisabled: boolean;
-  resultState: Result;
+  ligaState: LigaState;
   gameDays?: GameDay[];
+  gameDayState: GameDayState;
+  calculatePoints: () => void;
   getHomeGols: (gameNumber: number) => number | "";
   getAwayGols: (gameNumber: number) => number | "";
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -23,58 +24,46 @@ type Props = {
   handleScoreHomeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleScoreAwayChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getGameDays: (ligaId?: string, gameDays?: GameDay[]) => GameDay[] | undefined;
-  calculatePoints: () => void;
 };
 
 export function ResultForm({
   ligas,
   gameDays,
   isLoading,
+  ligaState,
   isDisabled,
-  resultState,
   getGameDays,
   getHomeGols,
   getAwayGols,
+  gameDayState,
   handleSubmit,
+  calculatePoints,
   handleLigaChange,
   handleGameDayChange,
   handleScoreHomeChange,
   handleScoreAwayChange,
-  calculatePoints,
 }: Props) {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2} p={2}>
-        <Grid xs={12} md={9}>
-          <AutocompleteField
-            name="liga"
-            label="Liga"
-            options={ligas}
-            value={resultState?.liga?.id === "" ? null : resultState.liga}
-            handleChange={handleLigaChange}
-            disabled={isLoading || isDisabled}
-          />
-        </Grid>
+        <GameDaySelector
+          ligas={ligas}
+          gameDays={gameDays}
+          ligaState={ligaState}
+          isLoading={isLoading}
+          isDisabled={isDisabled}
+          getGameDays={getGameDays}
+          gameDayState={gameDayState}
+          handleLigaChange={handleLigaChange}
+          handleGameDayChange={handleGameDayChange}
+        />
 
-        <Grid xs={12} md={9}>
-          <AutocompleteGameDay
-            name="gameDay"
-            label="Game Day"
-            options={getGameDays(resultState.liga?.id, gameDays)}
-            value={
-              resultState?.gameDay?.round === 0 ? null : resultState.gameDay
-            }
-            handleChange={handleGameDayChange}
-            disabled={isLoading || isDisabled}
-          />
-        </Grid>
-
-        {resultState.gameDay && (
+        {gameDayState.gameDay && (
           <Grid mt={2} xs={12}>
             <Typography variant="h6">Games</Typography>
           </Grid>
         )}
-        {resultState.gameDay?.games.map((g) => {
+        {gameDayState.gameDay?.games.map((g) => {
           return (
             <Grid container xs={12} md={9} key={g.id}>
               <Grid xs={6} md={6}>

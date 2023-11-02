@@ -6,11 +6,6 @@ export type Result = {
     name: string;
   };
   gameDay: GameDay;
-  // resultScores: {
-  //   gameNumber: number;
-  //   homeGols: number;
-  //   awayGols: number;
-  // }[];
 };
 
 export type Score = {

@@ -13,12 +13,16 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { AutocompleteField } from "../../components/AutocompleteField";
 import GamesTable from "./components/GamesTable";
 
 export default function CreateGameDay() {
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
   const { enqueueSnackbar } = useSnackbar();
   const initialGameDayState: GameDay = {
     id: "",
@@ -38,9 +42,17 @@ export default function CreateGameDay() {
   const [gameDayState, setGameDayState] =
     useState<GameDay>(initialGameDayState);
   const [gameState, setGameState] = useState<Game>(initialGameState);
+  const [isLigaSet, setIsLigaSet] = useState(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   const [ligas, teams, isLoading, error] = useLoadAutocompleteFields();
+
+  if (!isLigaSet && ligas?.length != 0) {
+    setIsLigaSet(true);
+    const ligaId = searchParams.get("liga_id")?.toString();
+    const liga = ligas?.find((liga) => liga.id === ligaId);
+    liga && setGameDayState({ ...gameDayState, ["liga"]: liga });
+  }
 
   useEffect(() => {
     if (error) {
@@ -52,6 +64,10 @@ export default function CreateGameDay() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setGameDayState({ ...gameDayState, [name]: value });
+
+    const params = new URLSearchParams(searchParams);
+    params.delete("game_day_id");
+    replace(`${pathname}?${params.toString()}`);
   };
 
   const handleChangeGame = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +122,7 @@ export default function CreateGameDay() {
     if (response.ok) {
       enqueueSnackbar(`Game Day created successfully`, { variant: "success" });
       setGameDayState(initialGameDayState);
+      setIsLigaSet(false);
     } else {
       console.error(
         `There was an error on Game Day creation. Status: ${response.status} - Message: ${response.statusText}`

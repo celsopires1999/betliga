@@ -1,9 +1,7 @@
 "use client";
 
-import { Bet } from "@/frontend/types/Bet";
+import { useGameDaySelector } from "@/frontend/hooks/useGameDaySelector";
 import { Better } from "@/frontend/types/Better";
-import { GameDay } from "@/frontend/types/GameDay";
-import { Liga } from "@/frontend/types/Liga";
 import { fetcher } from "@/frontend/utils/http";
 import { Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -11,32 +9,39 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { BetForm } from "./components/BetForm";
 
+export type BetState = {
+  better: {
+    id: string;
+    name: string;
+  };
+  betScores: {
+    gameNumber: number;
+    homeGols: number;
+    awayGols: number;
+  }[];
+};
+
 export function CreateBet() {
   const { enqueueSnackbar } = useSnackbar();
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-  const initialBetState: Bet = {
-    liga: { id: "", name: "" },
+  const initialBetState: BetState = {
     better: { id: "", name: "" },
-    gameDay: {
-      id: "",
-      ligaId: "",
-      round: 0,
-      liga: { id: "", name: "" },
-      games: [],
-    },
     betScores: [],
   };
-  const [betState, setBetState] = useState<Bet>(initialBetState);
+  const [betState, setBetState] = useState<BetState>(initialBetState);
 
-  const {
-    data: ligas,
-    error: errorLiga,
-    isLoading: isLoadingLiga,
-  } = useSWR<Liga[]>(`/api/ligas`, fetcher, {
-    fallbackData: [],
-  });
-
+  const [
+    ligas,
+    gameDays,
+    ligaState,
+    isLoadingGameDay,
+    isDisabledGameDay,
+    getGameDays,
+    gameDayState,
+    handleLigaChange,
+    handleGameDayChange,
+  ] = useGameDaySelector();
   const {
     data: betters,
     error: errorBetter,
@@ -45,24 +50,8 @@ export function CreateBet() {
     fallbackData: [],
   });
 
-  const {
-    data: gameDays,
-    error: errorGameDay,
-    isLoading: isLoadingGameDay,
-  } = useSWR<GameDay[]>(
-    betState.liga?.id ? `/api/game-days?ligaId=${betState.liga?.id}` : null,
-    fetcher,
-    {
-      fallbackData: [],
-    }
-  );
-
-  const isLoading = isLoadingLiga || isLoadingBetter || isLoadingGameDay;
-  const error = errorLiga
-    ? errorLiga
-    : errorBetter
-    ? errorBetter
-    : errorGameDay;
+  const isLoading = isLoadingBetter || isLoadingGameDay;
+  const error = errorBetter;
 
   useEffect(() => {
     if (error) {
@@ -74,21 +63,6 @@ export function CreateBet() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setBetState({ ...betState, [name]: value });
-  };
-
-  const handleLigaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBetState({
-      ...betState,
-      [name]: value,
-      ["gameDay"]: initialBetState.gameDay,
-      ["betScores"]: [],
-    });
-  };
-
-  const handleGameDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setBetState({ ...betState, [name]: value, ["betScores"]: [] });
   };
 
   const handleScoreHomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,17 +111,6 @@ export function CreateBet() {
     setBetState({ ...betState, betScores });
   };
 
-  const getGameDays = (ligaId?: string, gameDays?: GameDay[]) => {
-    if (!ligaId || !gameDays) {
-      return undefined;
-    }
-    const foundGameDays = gameDays.filter((g) => g.ligaId === ligaId);
-    if (foundGameDays.length === 0) {
-      return undefined;
-    }
-    return foundGameDays;
-  };
-
   const getHomeGols = (gameNumber: number) => {
     const score = betState.betScores.find((g) => g.gameNumber === gameNumber);
     return score?.homeGols ?? "";
@@ -163,13 +126,13 @@ export function CreateBet() {
     setIsDisabled(true);
     const data = {
       liga: {
-        name: betState.liga?.name,
+        name: ligaState.liga?.name,
       },
       better: {
         name: betState.better?.name,
       },
       gameDay: {
-        round: betState.gameDay?.round,
+        round: gameDayState.gameDay?.round,
       },
       betScores: betState.betScores,
     };
@@ -209,9 +172,11 @@ export function CreateBet() {
           ligas={ligas}
           betters={betters}
           betState={betState}
+          ligaState={ligaState}
+          gameDayState={gameDayState}
           gameDays={gameDays}
           isLoading={isLoading}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled || isDisabledGameDay}
           getAwayGols={getAwayGols}
           getGameDays={getGameDays}
           getHomeGols={getHomeGols}

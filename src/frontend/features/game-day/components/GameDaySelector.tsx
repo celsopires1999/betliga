@@ -1,5 +1,3 @@
-"use client";
-
 import { AutocompleteField } from "@/frontend/components/AutocompleteField";
 import { AutocompleteGameDay } from "@/frontend/components/AutocompleteGameDay";
 import { GameDayState, LigaState } from "@/frontend/hooks/useGameDaySelector";

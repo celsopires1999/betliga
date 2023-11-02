@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItem,
@@ -11,6 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import qs from "qs";
+
 const drawerWidth = 240;
 
 type Props = {
@@ -19,6 +21,11 @@ type Props = {
 };
 
 export function ResponsiveDrawer({ open, onClose }: Props) {
+  const searchParams = useSearchParams();
+  const ligaId = searchParams.get("liga_id")?.toString();
+  const gameDayId = searchParams.get("game_day_id")?.toString();
+  const query = qs.stringify({ liga_id: ligaId, game_day_id: gameDayId });
+
   const routes = [
     {
       path: "/dashboard",
@@ -55,7 +62,10 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
       <List>
         {routes.map((route, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton href={route.path} LinkComponent={Link}>
+            <ListItemButton
+              href={`${route.path}/?${query}`}
+              LinkComponent={Link}
+            >
               <ListItemText>{route.name}</ListItemText>
             </ListItemButton>
           </ListItem>
