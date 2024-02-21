@@ -17,6 +17,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { AutocompleteField } from "../../components/AutocompleteField";
+import { GamesLoader } from "./components/GamesLoader";
 import GamesTable from "./components/GamesTable";
 
 export default function CreateGameDay() {
@@ -44,6 +45,7 @@ export default function CreateGameDay() {
   const [gameState, setGameState] = useState<Game>(initialGameState);
   const [isLigaSet, setIsLigaSet] = useState(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [gamesLoaderOpen, setGamesLoaderOpen] = useState<boolean>(false);
 
   const [ligas, teams, isLoading, error] = useLoadAutocompleteFields();
 
@@ -91,6 +93,18 @@ export default function CreateGameDay() {
     for (let i = 0; i < games.length; i++) {
       games[i].gameNumber = i + 1;
     }
+    setGameDayState({ ...gameDayState, games });
+  };
+
+  const gamesLoadOpen = () => {
+    setGamesLoaderOpen(true);
+  };
+
+  const gamesLoadClose = () => {
+    setGamesLoaderOpen(false);
+  };
+
+  const gamesLoad = (games: Game[]) => {
     setGameDayState({ ...gameDayState, games });
   };
 
@@ -234,11 +248,25 @@ export default function CreateGameDay() {
                 >
                   {isLoading ? "Loading" : "Save"}
                 </Button>
+                <Button
+                  color="warning"
+                  variant="contained"
+                  name="games-load"
+                  onClick={gamesLoadOpen}
+                  disabled={isLoading || isDisabled}
+                >
+                  Load Games
+                </Button>
               </Box>
             </Grid>
           </Grid>
         </form>
       </Paper>
+      <GamesLoader
+        open={gamesLoaderOpen}
+        gamesLoad={gamesLoad}
+        gamesLoadClose={gamesLoadClose}
+      />
     </Box>
   );
 }
