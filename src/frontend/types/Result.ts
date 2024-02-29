@@ -10,6 +10,6 @@ export type Result = {
 
 export type Score = {
   gameNumber: number;
-  homeGols: number;
-  awayGols: number;
+  homeGols: number | null;
+  awayGols: number | null;
 };

@@ -45,7 +45,9 @@ export default function ThemeRegistry({
               mode={currentTheme.palette.mode === "dark" ? "dark" : "light"}
             />
           </AppBar>
-          <ResponsiveDrawer open={mobileOpen} onClose={handleDrawerToggle} />
+          <React.Suspense>
+            <ResponsiveDrawer open={mobileOpen} onClose={handleDrawerToggle} />
+          </React.Suspense>
           <SnackbarProvider
             autoHideDuration={2000}
             maxSnack={3}
