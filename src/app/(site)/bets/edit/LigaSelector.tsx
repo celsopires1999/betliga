@@ -7,7 +7,6 @@ import {
   AutocompleteChangeReason,
   TextField,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SyntheticEvent } from "react";
@@ -58,17 +57,15 @@ export function LigaSelector({ ligas }: { ligas: Liga[] }) {
   const selectedLigaId = searchParams.get("liga_id");
   const selectedLiga = ligas.find((liga) => liga.id === selectedLigaId);
   return (
-    <Grid xs={12} md={9}>
-      <Autocomplete
-        clearOnEscape
-        options={ligas}
-        onChange={onChange}
-        renderOption={renderOption}
-        value={selectedLiga ?? null}
-        getOptionLabel={getOptionLabel}
-        isOptionEqualToValue={isOptionEqualToValue}
-        renderInput={(params) => <TextField {...params} label="Liga" />}
-      />
-    </Grid>
+    <Autocomplete
+      clearOnEscape
+      options={ligas}
+      onChange={onChange}
+      renderOption={renderOption}
+      value={selectedLiga ?? null}
+      getOptionLabel={getOptionLabel}
+      isOptionEqualToValue={isOptionEqualToValue}
+      renderInput={(params) => <TextField {...params} label="Liga" />}
+    />
   );
 }

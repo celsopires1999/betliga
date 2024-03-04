@@ -15,6 +15,11 @@ export type BetScoreProps = BetScoreParams;
 
 export type BetScorePropsJson = BetScoreParams;
 
+export type ChangeBetScoreParams = Omit<
+  BetScoreParams,
+  "id" | "betId" | "column" | "points"
+>;
+
 export class BetScore {
   id: string;
   gameId: string;
@@ -80,6 +85,13 @@ export class BetScore {
       return true;
     }
     return false;
+  }
+
+  changeScore(score: ChangeBetScoreParams) {
+    this.homeGols = score.homeGols;
+    this.awayGols = score.awayGols;
+    this.column = BetScore.defineColumn(score.homeGols, score.awayGols);
+    this.points = null;
   }
 
   toJSON(): BetScorePropsJson {

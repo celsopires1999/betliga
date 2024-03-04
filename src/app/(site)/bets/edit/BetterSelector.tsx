@@ -8,7 +8,6 @@ import {
   AutocompleteChangeReason,
   TextField,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SyntheticEvent } from "react";
@@ -69,21 +68,19 @@ export function BetterDaySelector({ betters }: { betters: Better[] }) {
   }
 
   const selectedBetterId = searchParams.get("better_id");
-  const selectedBetter = betters.find(
+  const selectedBetter = betters?.find(
     (better) => better.id === selectedBetterId
   );
   return (
-    <Grid xs={12} md={9}>
-      <Autocomplete
-        clearOnEscape
-        options={betters}
-        onChange={onChange}
-        renderOption={renderOption}
-        value={selectedBetter ?? null}
-        getOptionLabel={getOptionLabel}
-        isOptionEqualToValue={isOptionEqualToValue}
-        renderInput={(params) => <TextField {...params} label="Better" />}
-      />
-    </Grid>
+    <Autocomplete
+      clearOnEscape
+      options={betters ?? []}
+      onChange={onChange}
+      renderOption={renderOption}
+      value={selectedBetter ?? null}
+      getOptionLabel={getOptionLabel}
+      isOptionEqualToValue={isOptionEqualToValue}
+      renderInput={(params) => <TextField {...params} label="Better" />}
+    />
   );
 }

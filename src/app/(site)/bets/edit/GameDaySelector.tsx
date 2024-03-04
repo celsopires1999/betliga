@@ -7,12 +7,11 @@ import {
   AutocompleteChangeReason,
   TextField,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SyntheticEvent } from "react";
 
-type GameDaysWithoutLiga = Omit<GameDay, "liga">;
+export type GameDaysWithoutLiga = Omit<GameDay, "liga">;
 
 export function GameDaySelector({
   game_days,
@@ -76,17 +75,15 @@ export function GameDaySelector({
     (gameDay) => gameDay.id === selectedGameDayId
   );
   return (
-    <Grid xs={12} md={9}>
-      <Autocomplete
-        clearOnEscape
-        options={game_days}
-        onChange={onChange}
-        renderOption={renderOption}
-        getOptionLabel={getOptionLabel}
-        value={selectedGameDay ?? null}
-        isOptionEqualToValue={isOptionEqualToValue}
-        renderInput={(params) => <TextField {...params} label="Game Day" />}
-      />
-    </Grid>
+    <Autocomplete
+      clearOnEscape
+      options={game_days}
+      onChange={onChange}
+      renderOption={renderOption}
+      getOptionLabel={getOptionLabel}
+      value={selectedGameDay ?? null}
+      isOptionEqualToValue={isOptionEqualToValue}
+      renderInput={(params) => <TextField {...params} label="Game Day" />}
+    />
   );
 }

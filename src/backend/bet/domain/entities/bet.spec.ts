@@ -1,6 +1,6 @@
 import { Game } from "@/backend/game-day/domain/entities/game";
 import { Bet, BetCreateParams, BetRestoreParams } from "./bet";
-import { BetScoreParams } from "./bet-score";
+import { BetScoreParams, ChangeBetScoreParams } from "./bet-score";
 
 describe("Bet Unit Test", () => {
   const betScoresRestore: BetScoreParams[] = [
@@ -16,7 +16,7 @@ describe("Bet Unit Test", () => {
     {
       id: "2",
       betId: "2",
-      gameId: "1",
+      gameId: "2",
       homeGols: 2,
       awayGols: 1,
       column: "1",
@@ -33,7 +33,7 @@ describe("Bet Unit Test", () => {
     },
     {
       betId: "2",
-      gameId: "1",
+      gameId: "2",
       homeGols: 2,
       awayGols: 1,
     },
@@ -110,11 +110,57 @@ describe("Bet Unit Test", () => {
       }),
     ];
 
-    const bet = Bet.create(betCreate);
+    const bet = Bet.restore(betRestore);
     bet.calculatePoints(games);
     expect(bet.betScores[0].points).toBe(10);
     expect(bet.betScores[1].points).toBe(5);
     expect(bet.points).toBe(15);
+  });
+
+  it("should change scores", () => {
+    const changeBetScoreParams: ChangeBetScoreParams[] = [
+      {
+        gameId: "1",
+        homeGols: 9,
+        awayGols: 8,
+      },
+      {
+        gameId: "2",
+        homeGols: 8,
+        awayGols: 9,
+      },
+    ];
+    const bet = Bet.restore(betRestore);
+
+    expect(bet.id).toBe(betRestore.id);
+    expect(bet.gameDayId).toBe(betRestore.gameDayId);
+    expect(bet.betterId).toBe(betRestore.betterId);
+    expect(bet.betScores.length).toBe(2);
+    expect(bet.betScores[0].homeGols).toBe(1);
+    expect(bet.betScores[0].awayGols).toBe(1);
+    expect(bet.betScores[0].column).toBe("X");
+    expect(bet.betScores[0].points).toBeNull();
+    expect(bet.betScores[1].homeGols).toBe(2);
+    expect(bet.betScores[1].awayGols).toBe(1);
+    expect(bet.betScores[1].column).toBe("1");
+    expect(bet.betScores[1].points).toBe(5);
+
+    bet.changeScores(changeBetScoreParams);
+
+    expect(bet.gameDayId).toBe(betRestore.gameDayId);
+    expect(bet.betterId).toBe(betRestore.betterId);
+    expect(bet.betScores.length).toBe(2);
+    expect(bet.betScores[0].homeGols).toBe(9);
+    expect(bet.betScores[0].awayGols).toBe(8);
+    expect(bet.betScores[0].column).toBe("1");
+    expect(bet.betScores[0].points).toBeNull();
+    expect(bet.betScores[1].homeGols).toBe(8);
+    expect(bet.betScores[1].awayGols).toBe(9);
+    expect(bet.betScores[1].column).toBe("2");
+    expect(bet.betScores[1].points).toBeNull();
+    expect(bet.betScores[0].points).toBeNull();
+    expect(bet.betScores[1].points).toBeNull();
+    expect(bet.points).toBeNull();
   });
 
   it("should convert to JSON", () => {
@@ -134,7 +180,7 @@ describe("Bet Unit Test", () => {
         },
         {
           id: "2",
-          gameId: "1",
+          gameId: "2",
           betId: "2",
           homeGols: 2,
           awayGols: 1,

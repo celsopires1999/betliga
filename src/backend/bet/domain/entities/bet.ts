@@ -1,6 +1,11 @@
 import { Game } from "@/backend/game-day/domain/entities/game";
 import { v4 as uuidv4 } from "uuid";
-import { BetScore, BetScoreParams, BetScorePropsJson } from "./bet-score";
+import {
+  BetScore,
+  BetScoreParams,
+  BetScorePropsJson,
+  ChangeBetScoreParams,
+} from "./bet-score";
 
 export type BetRestoreParams = {
   id: string;
@@ -59,6 +64,15 @@ export class Bet {
       }
     });
     this.points = points;
+  }
+
+  changeScores(scores: ChangeBetScoreParams[]) {
+    this.betScores.forEach((b) => {
+      const index = scores.findIndex((s) => s.gameId === b.gameId);
+      if (index !== -1) {
+        b.changeScore(scores[index]);
+      }
+    });
   }
 
   toJSON(): BetPropsJson {
