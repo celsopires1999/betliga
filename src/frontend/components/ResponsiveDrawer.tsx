@@ -24,7 +24,12 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
   const searchParams = useSearchParams();
   const ligaId = searchParams.get("liga_id")?.toString();
   const gameDayId = searchParams.get("game_day_id")?.toString();
-  const query = qs.stringify({ liga_id: ligaId, game_day_id: gameDayId });
+  const betterId = searchParams.get("better_id")?.toString();
+  const query = qs.stringify({
+    liga_id: ligaId,
+    game_day_id: gameDayId,
+    better_id: betterId,
+  });
 
   const routes = [
     {
@@ -38,6 +43,10 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
     {
       path: "/bets/create",
       name: "Create Bet",
+    },
+    {
+      path: "/bets/edit",
+      name: "Edit Bet",
     },
     {
       path: "/game-days/result",
@@ -65,6 +74,7 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
             <ListItemButton
               href={`${route.path}/?${query}`}
               LinkComponent={Link}
+              // onClick={toggleDrawer}
             >
               <ListItemText>{route.name}</ListItemText>
             </ListItemButton>
@@ -74,9 +84,10 @@ export function ResponsiveDrawer({ open, onClose }: Props) {
     </div>
   );
 
-  const toggleDrawer = (_event: React.MouseEvent) => {
+  function toggleDrawer(_event: React.MouseEvent) {
+    if (!open) return;
     onClose();
-  };
+  }
 
   return (
     <Box

@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { BetterDaySelector } from "./BetterSelector";
+import { BetterSelector } from "./BetterSelector";
 import { CommandButtons } from "./CommandButtons";
 import { EditBetForm } from "./EditBetForm";
 import { GameDaySelector } from "./GameDaySelector";
@@ -53,12 +53,12 @@ export default async function EditBetPage({
               <GameDaySelector game_days={game_days} />
             </Grid>
             <Grid xs={12} md={9}>
-              <BetterDaySelector betters={betters} />
+              <BetterSelector betters={betters} />
             </Grid>
             <Input type="hidden" name="liga_id" value={liga_id ?? ""} />
             <Input type="hidden" name="game_day_id" value={game_day_id ?? ""} />
             <Input type="hidden" name="better_id" value={better_id ?? ""} />
-            <Input type="hidden" name="bet_id" value={bet?.id} />
+            <Input type="hidden" name="bet_id" value={bet?.id ?? ""} />
 
             {/* {bet?.scores && ( */}
             {scores && (

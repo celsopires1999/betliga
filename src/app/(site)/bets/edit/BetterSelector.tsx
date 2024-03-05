@@ -12,7 +12,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { useRouter, useSearchParams } from "next/navigation";
 import { SyntheticEvent } from "react";
 
-export function BetterDaySelector({ betters }: { betters: Better[] }) {
+export function BetterSelector({ betters }: { betters: Better[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const getOptionLabel = (option: Better): string => option.name as string;
